@@ -1,34 +1,34 @@
 /**
- * API Route: /api/walks
- * Handles listing all walks (GET) and creating new walks (POST)
+ * API Route: /api/activities
+ * Handles listing all activities (GET) and creating new activities (POST)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { CreateWalkInput } from '@/types/walk';
+import { CreateActivityInput } from '@/types/activity';
 
 /**
- * GET /api/walks
- * List all walks, sorted by walk_date descending (newest first)
+ * GET /api/activities
+ * List all activities, sorted by activity_date descending (newest first)
  */
 export async function GET() {
   try {
     const { data, error } = await supabase
-      .from('walks')
+      .from('activities')
       .select('*')
-      .order('walk_date', { ascending: false });
+      .order('activity_date', { ascending: false });
 
     if (error) {
-      console.error('Supabase error fetching walks:', error);
+      console.error('Supabase error fetching activities:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch walks', details: error.message },
+        { error: 'Failed to fetch activities', details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ walks: data || [] });
+    return NextResponse.json({ activities: data || [] });
   } catch (error) {
-    console.error('Unexpected error fetching walks:', error);
+    console.error('Unexpected error fetching activities:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -37,17 +37,17 @@ export async function GET() {
 }
 
 /**
- * POST /api/walks
- * Create a new walk
+ * POST /api/activities
+ * Create a new activity
  */
 export async function POST(request: NextRequest) {
   try {
-    const body: CreateWalkInput = await request.json();
+    const body: CreateActivityInput = await request.json();
 
     // Validate required fields
-    if (!body.title || !body.duration_minutes || !body.walk_date) {
+    if (!body.title || !body.duration_minutes || !body.activity_date) {
       return NextResponse.json(
-        { error: 'Missing required fields: title, duration_minutes, walk_date' },
+        { error: 'Missing required fields: title, duration_minutes, activity_date' },
         { status: 400 }
       );
     }
@@ -62,27 +62,27 @@ export async function POST(request: NextRequest) {
 
     // Insert into database
     const { data, error } = await supabase
-      .from('walks')
+      .from('activities')
       .insert({
         title: body.title,
         notes: body.notes || null,
         duration_minutes: body.duration_minutes,
-        walk_date: body.walk_date,
+        activity_date: body.activity_date,
       })
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error creating walk:', error);
+      console.error('Supabase error creating activity:', error);
       return NextResponse.json(
-        { error: 'Failed to create walk', details: error.message },
+        { error: 'Failed to create activity', details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ walk: data }, { status: 201 });
+    return NextResponse.json({ activity: data }, { status: 201 });
   } catch (error) {
-    console.error('Unexpected error creating walk:', error);
+    console.error('Unexpected error creating activity:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

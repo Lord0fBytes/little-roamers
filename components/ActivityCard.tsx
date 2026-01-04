@@ -1,14 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Walk } from '@/types/walk';
+import { Activity } from '@/types/activity';
 import Link from 'next/link';
 
-interface WalkCardProps {
-  walk: Walk;
+interface ActivityCardProps {
+  activity: Activity;
 }
 
-export default function WalkCard({ walk }: WalkCardProps) {
+export default function ActivityCard({ activity }: ActivityCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const today = new Date();
@@ -38,21 +38,21 @@ export default function WalkCard({ walk }: WalkCardProps) {
   };
 
   return (
-    <Link href={`/walks/${walk.id}`}>
+    <Link href={`/activities/${activity.id}`}>
       <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 cursor-pointer">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-lg font-semibold text-gray-900">{walk.title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{activity.title}</h3>
           <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-sm font-medium">
-            {formatDuration(walk.duration_minutes)}
+            {formatDuration(activity.duration_minutes)}
           </span>
         </div>
 
         <div className="text-sm text-gray-500 mb-2">
-          {formatDate(walk.walk_date)}
+          {formatDate(activity.activity_date)}
         </div>
 
-        {walk.notes && (
-          <p className="text-gray-700 text-sm line-clamp-2">{walk.notes}</p>
+        {activity.notes && (
+          <p className="text-gray-700 text-sm line-clamp-2">{activity.notes}</p>
         )}
       </div>
     </Link>

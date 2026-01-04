@@ -1,28 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CreateWalkInput, Walk } from '@/types/walk';
+import { CreateActivityInput, Activity } from '@/types/activity';
 import Button from './Button';
 
-interface WalkFormProps {
-  initialData?: Walk;
-  onSubmit: (data: CreateWalkInput) => void;
+interface ActivityFormProps {
+  initialData?: Activity;
+  onSubmit: (data: CreateActivityInput) => void;
   onCancel: () => void;
   submitLabel?: string;
 }
 
-export default function WalkForm({
+export default function ActivityForm({
   initialData,
   onSubmit,
   onCancel,
-  submitLabel = 'Save Walk',
-}: WalkFormProps) {
-  const [formData, setFormData] = useState<CreateWalkInput>({
+  submitLabel = 'Save Activity',
+}: ActivityFormProps) {
+  const [formData, setFormData] = useState<CreateActivityInput>({
     title: initialData?.title || '',
     notes: initialData?.notes || '',
     duration_minutes: initialData?.duration_minutes || 0,
-    walk_date: initialData?.walk_date
-      ? new Date(initialData.walk_date).toISOString().split('T')[0]
+    activity_date: initialData?.activity_date
+      ? new Date(initialData.activity_date).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
   });
 
@@ -55,19 +55,19 @@ export default function WalkForm({
           onChange={handleChange}
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          placeholder="Morning walk in the park"
+          placeholder="Morning hike in the woods"
         />
       </div>
 
       <div>
-        <label htmlFor="walk_date" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="activity_date" className="block text-sm font-medium text-gray-700 mb-1">
           Date *
         </label>
         <input
           type="date"
-          id="walk_date"
-          name="walk_date"
-          value={formData.walk_date}
+          id="activity_date"
+          name="activity_date"
+          value={formData.activity_date}
           onChange={handleChange}
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -102,7 +102,7 @@ export default function WalkForm({
           onChange={handleChange}
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          placeholder="Add notes about your walk..."
+          placeholder="Add notes about your activity..."
         />
       </div>
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { WalksProvider } from '@/contexts/WalksContext';
+import { ActivitiesProvider } from '@/contexts/ActivitiesContext';
 
 export const metadata: Metadata = {
   title: 'Little Roamers - Growing Up Outdoors',
@@ -15,9 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <WalksProvider>
+        <ActivitiesProvider>
           {children}
-        </WalksProvider>
+        </ActivitiesProvider>
       </body>
     </html>
   );

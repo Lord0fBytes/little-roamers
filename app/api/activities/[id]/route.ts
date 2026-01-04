@@ -1,15 +1,15 @@
 /**
- * API Route: /api/walks/[id]
- * Handles getting, updating, and deleting individual walks
+ * API Route: /api/activities/[id]
+ * Handles getting, updating, and deleting individual activities
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { UpdateWalkInput } from '@/types/walk';
+import { UpdateActivityInput } from '@/types/activity';
 
 /**
- * GET /api/walks/[id]
- * Get a single walk by ID
+ * GET /api/activities/[id]
+ * Get a single activity by ID
  */
 export async function GET(
   request: NextRequest,
@@ -19,7 +19,7 @@ export async function GET(
     const { id } = await params;
 
     const { data, error } = await supabase
-      .from('walks')
+      .from('activities')
       .select('*')
       .eq('id', id)
       .single();
@@ -27,21 +27,21 @@ export async function GET(
     if (error) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
-          { error: 'Walk not found' },
+          { error: 'Activity not found' },
           { status: 404 }
         );
       }
 
-      console.error('Supabase error fetching walk:', error);
+      console.error('Supabase error fetching activity:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch walk', details: error.message },
+        { error: 'Failed to fetch activity', details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ walk: data });
+    return NextResponse.json({ activity: data });
   } catch (error) {
-    console.error('Unexpected error fetching walk:', error);
+    console.error('Unexpected error fetching activity:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -50,8 +50,8 @@ export async function GET(
 }
 
 /**
- * PATCH /api/walks/[id]
- * Update a walk by ID
+ * PATCH /api/activities/[id]
+ * Update an activity by ID
  */
 export async function PATCH(
   request: NextRequest,
@@ -59,7 +59,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const body: UpdateWalkInput = await request.json();
+    const body: UpdateActivityInput = await request.json();
 
     // Build update object (only include fields that were provided)
     const updateData: Record<string, unknown> = {};
@@ -74,7 +74,7 @@ export async function PATCH(
       }
       updateData.duration_minutes = body.duration_minutes;
     }
-    if (body.walk_date !== undefined) updateData.walk_date = body.walk_date;
+    if (body.activity_date !== undefined) updateData.activity_date = body.activity_date;
 
     // Check if there's anything to update
     if (Object.keys(updateData).length === 0) {
@@ -86,7 +86,7 @@ export async function PATCH(
 
     // Update in database
     const { data, error } = await supabase
-      .from('walks')
+      .from('activities')
       .update(updateData)
       .eq('id', id)
       .select()
@@ -95,21 +95,21 @@ export async function PATCH(
     if (error) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
-          { error: 'Walk not found' },
+          { error: 'Activity not found' },
           { status: 404 }
         );
       }
 
-      console.error('Supabase error updating walk:', error);
+      console.error('Supabase error updating activity:', error);
       return NextResponse.json(
-        { error: 'Failed to update walk', details: error.message },
+        { error: 'Failed to update activity', details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ walk: data });
+    return NextResponse.json({ activity: data });
   } catch (error) {
-    console.error('Unexpected error updating walk:', error);
+    console.error('Unexpected error updating activity:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -118,8 +118,8 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/walks/[id]
- * Delete a walk by ID
+ * DELETE /api/activities/[id]
+ * Delete an activity by ID
  */
 export async function DELETE(
   request: NextRequest,
@@ -129,21 +129,21 @@ export async function DELETE(
     const { id } = await params;
 
     const { error } = await supabase
-      .from('walks')
+      .from('activities')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Supabase error deleting walk:', error);
+      console.error('Supabase error deleting activity:', error);
       return NextResponse.json(
-        { error: 'Failed to delete walk', details: error.message },
+        { error: 'Failed to delete activity', details: error.message },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('Unexpected error deleting walk:', error);
+    console.error('Unexpected error deleting activity:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

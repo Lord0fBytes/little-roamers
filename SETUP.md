@@ -2,6 +2,8 @@
 
 This guide will help you set up the database integration for Little Roamers Version 0.2.0.
 
+**Note**: Little Roamers tracks all outdoor activities (hiking, playing, exploring, etc.), not just walks.
+
 ## Prerequisites
 
 - Node.js 18+ installed
@@ -32,7 +34,7 @@ This guide will help you set up the database integration for Little Roamers Vers
 Run this query in the SQL Editor to verify:
 
 ```sql
-SELECT * FROM walks;
+SELECT * FROM activities;
 ```
 
 You should get an empty result set (no errors).
@@ -81,45 +83,45 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Test the following functionality:
 
-### 1. Create a Walk
-- Click "Add Walk" button
+### 1. Create an Activity
+- Click "Log Activity" button
 - Fill in the form:
-  - Title: "Morning Walk"
+  - Title: "Morning hike"
   - Date: Today's date
   - Duration: 30 minutes
   - Notes: (optional)
-- Click "Save Walk"
+- Click "Save Activity"
 - You should be redirected to the feed
 
 ### 2. Verify Data Persistence
 - **Refresh the page** (Cmd+R / Ctrl+R)
-- The walk you created should still appear
+- The activity you created should still appear
 - This confirms data is being saved to Supabase!
 
-### 3. View Walk Details
-- Click on the walk card
+### 3. View Activity Details
+- Click on the activity card
 - Verify all details are displayed correctly
 
-### 4. Edit a Walk
-- On the walk detail page, click "Edit Walk"
+### 4. Edit an Activity
+- On the activity detail page, click "Edit Activity"
 - Change the title or duration
-- Click "Update Walk"
+- Click "Update Activity"
 - Verify changes are saved
 
-### 5. Delete a Walk
-- On the walk detail page, click "Delete Walk"
+### 5. Delete an Activity
+- On the activity detail page, click "Delete Activity"
 - Confirm the deletion
 - You should be redirected to the feed
-- The walk should be gone
+- The activity should be gone
 
 ### 6. Test in Supabase Dashboard
-- Go to Supabase → **Table Editor** → `walks` table
-- You should see any walks you've created
+- Go to Supabase → **Table Editor** → `activities` table
+- You should see any activities you've created
 - Verify the data matches what's in the app
 
 ## Troubleshooting
 
-### "Failed to fetch walks" Error
+### "Failed to fetch activities" Error
 
 **Possible causes:**
 
@@ -135,10 +137,10 @@ Test the following functionality:
 3. Look for error messages
 4. Check Network tab for failed API calls
 
-### "Walk not found" on Detail Page
+### "Activity not found" on Detail Page
 
 This can happen if:
-- The walk was deleted
+- The activity was deleted
 - You're using an invalid ID in the URL
 - Database connection is lost
 
@@ -153,26 +155,26 @@ kill -9 <PID>  # if something is using the port
 
 ## Database Utilities
 
-### View All Walks
+### View All Activities
 
 In Supabase SQL Editor:
 
 ```sql
-SELECT * FROM walks ORDER BY walk_date DESC;
+SELECT * FROM activities ORDER BY activity_date DESC;
 ```
 
-### Count Total Walks
+### Count Total Activities
 
 ```sql
-SELECT COUNT(*) FROM walks;
+SELECT COUNT(*) FROM activities;
 ```
 
-### Clear All Walks
+### Clear All Activities
 
 ⚠️ **Warning**: This deletes all data!
 
 ```sql
-DELETE FROM walks;
+DELETE FROM activities;
 ```
 
 ## Next Steps

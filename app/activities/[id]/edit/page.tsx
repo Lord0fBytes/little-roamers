@@ -2,41 +2,41 @@
 
 import React, { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWalks } from '@/contexts/WalksContext';
-import WalkForm from '@/components/WalkForm';
-import { CreateWalkInput, Walk } from '@/types/walk';
+import { useActivities } from '@/contexts/ActivitiesContext';
+import ActivityForm from '@/components/ActivityForm';
+import { CreateActivityInput, Activity } from '@/types/activity';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
-export default function EditWalkPage({
+export default function EditActivityPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const { getWalk, updateWalk } = useWalks();
-  const [walk, setWalk] = useState<Walk | null>(null);
+  const { getActivity, updateActivity } = useActivities();
+  const [activity, setActivity] = useState<Activity | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchWalk = async () => {
-      const fetchedWalk = await getWalk(id);
-      setWalk(fetchedWalk);
+    const fetchActivity = async () => {
+      const fetchedActivity = await getActivity(id);
+      setActivity(fetchedActivity);
       setLoading(false);
     };
-    fetchWalk();
-  }, [id, getWalk]);
+    fetchActivity();
+  }, [id, getActivity]);
 
-  const handleSubmit = async (data: CreateWalkInput) => {
-    const result = await updateWalk(id, data);
+  const handleSubmit = async (data: CreateActivityInput) => {
+    const result = await updateActivity(id, data);
     if (result) {
-      router.push(`/walks/${id}`);
+      router.push(`/activities/${id}`);
     }
   };
 
   const handleCancel = () => {
-    router.push(`/walks/${id}`);
+    router.push(`/activities/${id}`);
   };
 
   if (loading) {
@@ -49,11 +49,11 @@ export default function EditWalkPage({
     );
   }
 
-  if (!walk) {
+  if (!activity) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Walk Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Activity Not Found</h1>
           <Link href="/">
             <Button variant="primary">Back to Feed</Button>
           </Link>
@@ -65,13 +65,13 @@ export default function EditWalkPage({
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Walk</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Activity</h1>
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <WalkForm
-            initialData={walk}
+          <ActivityForm
+            initialData={activity}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-            submitLabel="Update Walk"
+            submitLabel="Update Activity"
           />
         </div>
       </div>

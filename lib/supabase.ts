@@ -34,13 +34,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export interface Database {
   public: {
     Tables: {
-      walks: {
+      activities: {
         Row: {
           id: string;
           title: string;
           notes: string | null;
           duration_minutes: number;
-          walk_date: string;
+          activity_date: string;
           created_at: string;
           updated_at: string;
         };
@@ -49,7 +49,7 @@ export interface Database {
           title: string;
           notes?: string | null;
           duration_minutes: number;
-          walk_date: string;
+          activity_date: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -58,7 +58,7 @@ export interface Database {
           title?: string;
           notes?: string | null;
           duration_minutes?: number;
-          walk_date?: string;
+          activity_date?: string;
           created_at?: string;
           updated_at?: string;
         };
