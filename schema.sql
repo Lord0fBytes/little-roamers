@@ -1,9 +1,15 @@
 -- Little Roamers Database Schema
--- Version 0.2.0 - Basic Schema
--- Run this in your Supabase SQL Editor
+-- Version 0.2.0 - Basic Schema (PostgreSQL)
+-- Run this in your PostgreSQL database (psql or GUI tool)
+
+-- Create database (run this first if database doesn't exist)
+-- CREATE DATABASE little_roamers;
+
+-- Connect to the database
+-- \c little_roamers
 
 -- Create activities table
-CREATE TABLE activities (
+CREATE TABLE IF NOT EXISTS activities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Basic Information (v0.2.0)
@@ -11,7 +17,7 @@ CREATE TABLE activities (
   notes TEXT,
 
   -- Activity Metrics (v0.2.0)
-  duration_minutes INTEGER NOT NULL,
+  duration_minutes INTEGER NOT NULL CHECK (duration_minutes > 0),
 
   -- Timestamps
   activity_date TIMESTAMPTZ NOT NULL,
@@ -20,19 +26,8 @@ CREATE TABLE activities (
 );
 
 -- Indexes for performance
-CREATE INDEX idx_activities_activity_date ON activities(activity_date DESC);
-CREATE INDEX idx_activities_created_at ON activities(created_at DESC);
-
--- Row Level Security (RLS)
--- Enable RLS on the table
-ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
-
--- Create policy allowing all operations for everyone (no authentication)
-CREATE POLICY "Allow all operations for everyone"
-  ON activities
-  FOR ALL
-  USING (true)
-  WITH CHECK (true);
+CREATE INDEX IF NOT EXISTS idx_activities_activity_date ON activities(activity_date DESC);
+CREATE INDEX IF NOT EXISTS idx_activities_created_at ON activities(created_at DESC);
 
 -- Auto-update timestamp trigger
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -43,14 +38,11 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_activities_updated_at ON activities;
 CREATE TRIGGER update_activities_updated_at
   BEFORE UPDATE ON activities
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
--- Grant permissions (if needed)
-GRANT ALL ON activities TO anon;
-GRANT ALL ON activities TO authenticated;
 
 -- Verification queries (run these to test):
 -- SELECT * FROM activities;

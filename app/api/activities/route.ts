@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { sql } from '@/lib/db';
 import { CreateActivityInput } from '@/types/activity';
 
 /**
@@ -13,24 +13,16 @@ import { CreateActivityInput } from '@/types/activity';
  */
 export async function GET() {
   try {
-    const { data, error } = await supabase
-      .from('activities')
-      .select('*')
-      .order('activity_date', { ascending: false });
+    const activities = await sql`
+      SELECT * FROM activities
+      ORDER BY activity_date DESC
+    `;
 
-    if (error) {
-      console.error('Supabase error fetching activities:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch activities', details: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ activities: data || [] });
+    return NextResponse.json({ activities });
   } catch (error) {
-    console.error('Unexpected error fetching activities:', error);
+    console.error('Database error fetching activities:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch activities', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -61,30 +53,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert into database
-    const { data, error } = await supabase
-      .from('activities')
-      .insert({
-        title: body.title,
-        notes: body.notes || null,
-        duration_minutes: body.duration_minutes,
-        activity_date: body.activity_date,
-      })
-      .select()
-      .single();
+    const [activity] = await sql`
+      INSERT INTO activities (title, notes, duration_minutes, activity_date)
+      VALUES (${body.title}, ${body.notes || null}, ${body.duration_minutes}, ${body.activity_date})
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error('Supabase error creating activity:', error);
-      return NextResponse.json(
-        { error: 'Failed to create activity', details: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ activity: data }, { status: 201 });
+    return NextResponse.json({ activity }, { status: 201 });
   } catch (error) {
-    console.error('Unexpected error creating activity:', error);
+    console.error('Database error creating activity:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to create activity', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

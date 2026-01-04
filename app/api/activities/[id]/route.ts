@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { sql } from '@/lib/db';
 import { UpdateActivityInput } from '@/types/activity';
 
 /**
@@ -18,32 +18,23 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const { data, error } = await supabase
-      .from('activities')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const [activity] = await sql`
+      SELECT * FROM activities
+      WHERE id = ${id}
+    `;
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Activity not found' },
-          { status: 404 }
-        );
-      }
-
-      console.error('Supabase error fetching activity:', error);
+    if (!activity) {
       return NextResponse.json(
-        { error: 'Failed to fetch activity', details: error.message },
-        { status: 500 }
+        { error: 'Activity not found' },
+        { status: 404 }
       );
     }
 
-    return NextResponse.json({ activity: data });
+    return NextResponse.json({ activity });
   } catch (error) {
-    console.error('Unexpected error fetching activity:', error);
+    console.error('Database error fetching activity:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch activity', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -63,6 +54,7 @@ export async function PATCH(
 
     // Build update object (only include fields that were provided)
     const updateData: Record<string, unknown> = {};
+
     if (body.title !== undefined) updateData.title = body.title;
     if (body.notes !== undefined) updateData.notes = body.notes || null;
     if (body.duration_minutes !== undefined) {
@@ -84,34 +76,26 @@ export async function PATCH(
       );
     }
 
-    // Update in database
-    const { data, error } = await supabase
-      .from('activities')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    // Update in database - postgres.js handles the SET clause automatically
+    const [activity] = await sql`
+      UPDATE activities
+      SET ${sql(updateData, ...Object.keys(updateData))}, updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Activity not found' },
-          { status: 404 }
-        );
-      }
-
-      console.error('Supabase error updating activity:', error);
+    if (!activity) {
       return NextResponse.json(
-        { error: 'Failed to update activity', details: error.message },
-        { status: 500 }
+        { error: 'Activity not found' },
+        { status: 404 }
       );
     }
 
-    return NextResponse.json({ activity: data });
+    return NextResponse.json({ activity });
   } catch (error) {
-    console.error('Unexpected error updating activity:', error);
+    console.error('Database error updating activity:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to update activity', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -128,24 +112,16 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const { error } = await supabase
-      .from('activities')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Supabase error deleting activity:', error);
-      return NextResponse.json(
-        { error: 'Failed to delete activity', details: error.message },
-        { status: 500 }
-      );
-    }
+    await sql`
+      DELETE FROM activities
+      WHERE id = ${id}
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('Unexpected error deleting activity:', error);
+    console.error('Database error deleting activity:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to delete activity', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
