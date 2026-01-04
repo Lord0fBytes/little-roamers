@@ -1,10 +1,10 @@
 'use client';
 
-import React, { use } from 'react';
+import React, { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWalks } from '@/contexts/WalksContext';
 import WalkForm from '@/components/WalkForm';
-import { CreateWalkInput } from '@/types/walk';
+import { CreateWalkInput, Walk } from '@/types/walk';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
@@ -16,8 +16,38 @@ export default function EditWalkPage({
   const { id } = use(params);
   const router = useRouter();
   const { getWalk, updateWalk } = useWalks();
+  const [walk, setWalk] = useState<Walk | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const walk = getWalk(id);
+  useEffect(() => {
+    const fetchWalk = async () => {
+      const fetchedWalk = await getWalk(id);
+      setWalk(fetchedWalk);
+      setLoading(false);
+    };
+    fetchWalk();
+  }, [id, getWalk]);
+
+  const handleSubmit = async (data: CreateWalkInput) => {
+    const result = await updateWalk(id, data);
+    if (result) {
+      router.push(`/walks/${id}`);
+    }
+  };
+
+  const handleCancel = () => {
+    router.push(`/walks/${id}`);
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!walk) {
     return (
@@ -31,15 +61,6 @@ export default function EditWalkPage({
       </main>
     );
   }
-
-  const handleSubmit = (data: CreateWalkInput) => {
-    updateWalk(id, data);
-    router.push(`/walks/${id}`);
-  };
-
-  const handleCancel = () => {
-    router.push(`/walks/${id}`);
-  };
 
   return (
     <main className="min-h-screen bg-gray-50">

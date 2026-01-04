@@ -10,9 +10,11 @@ export default function NewWalkPage() {
   const router = useRouter();
   const { createWalk } = useWalks();
 
-  const handleSubmit = (data: CreateWalkInput) => {
-    createWalk(data);
-    router.push('/');
+  const handleSubmit = async (data: CreateWalkInput) => {
+    const result = await createWalk(data);
+    if (result) {
+      router.push('/');
+    }
   };
 
   const handleCancel = () => {

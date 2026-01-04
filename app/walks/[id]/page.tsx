@@ -1,8 +1,9 @@
 'use client';
 
-import React, { use } from 'react';
+import React, { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWalks } from '@/contexts/WalksContext';
+import { Walk } from '@/types/walk';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
@@ -14,8 +15,36 @@ export default function WalkDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const { getWalk, deleteWalk } = useWalks();
+  const [walk, setWalk] = useState<Walk | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const walk = getWalk(id);
+  useEffect(() => {
+    const fetchWalk = async () => {
+      const fetchedWalk = await getWalk(id);
+      setWalk(fetchedWalk);
+      setLoading(false);
+    };
+    fetchWalk();
+  }, [id, getWalk]);
+
+  const handleDelete = async () => {
+    if (confirm('Are you sure you want to delete this walk?')) {
+      const success = await deleteWalk(id);
+      if (success) {
+        router.push('/');
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!walk) {
     return (
@@ -29,13 +58,6 @@ export default function WalkDetailPage({
       </main>
     );
   }
-
-  const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this walk?')) {
-      deleteWalk(id);
-      router.push('/');
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

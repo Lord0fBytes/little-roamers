@@ -7,12 +7,26 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 
 export default function Home() {
-  const { walks, loading } = useWalks();
+  const { walks, loading, error } = useWalks();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Walks</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-sm text-gray-500">
+            Make sure your Supabase database is set up correctly and environment variables are configured.
+          </p>
+        </div>
       </div>
     );
   }

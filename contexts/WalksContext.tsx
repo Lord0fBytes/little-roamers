@@ -1,68 +1,164 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Walk, CreateWalkInput, UpdateWalkInput } from '@/types/walk';
 
 interface WalksContextType {
   walks: Walk[];
   loading: boolean;
-  getWalk: (id: string) => Walk | undefined;
-  createWalk: (input: CreateWalkInput) => Walk;
-  updateWalk: (id: string, input: UpdateWalkInput) => Walk | null;
-  deleteWalk: (id: string) => boolean;
+  error: string | null;
+  getWalk: (id: string) => Promise<Walk | null>;
+  createWalk: (input: CreateWalkInput) => Promise<Walk | null>;
+  updateWalk: (id: string, input: UpdateWalkInput) => Promise<Walk | null>;
+  deleteWalk: (id: string) => Promise<boolean>;
+  refreshWalks: () => Promise<void>;
 }
 
 const WalksContext = createContext<WalksContextType | undefined>(undefined);
 
 export function WalksProvider({ children }: { children: ReactNode }) {
   const [walks, setWalks] = useState<Walk[]>([]);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const getWalk = (id: string): Walk | undefined => {
-    return walks.find(walk => walk.id === id);
+  // Load walks on mount
+  useEffect(() => {
+    refreshWalks();
+  }, []);
+
+  const refreshWalks = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/walks');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch walks: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setWalks(data.walks || []);
+    } catch (err) {
+      console.error('Error fetching walks:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch walks');
+      setWalks([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const createWalk = (input: CreateWalkInput): Walk => {
-    const now = new Date().toISOString();
-    const newWalk: Walk = {
-      id: crypto.randomUUID(),
-      ...input,
-      created_at: now,
-      updated_at: now,
-    };
+  const getWalk = async (id: string): Promise<Walk | null> => {
+    // First try to find in cached walks
+    const cachedWalk = walks.find(walk => walk.id === id);
+    if (cachedWalk) {
+      return cachedWalk;
+    }
 
-    setWalks(prevWalks => [newWalk, ...prevWalks]);
-    return newWalk;
-  };
-
-  const updateWalk = (id: string, input: UpdateWalkInput): Walk | null => {
-    let updatedWalk: Walk | null = null;
-
-    setWalks(prevWalks =>
-      prevWalks.map(walk => {
-        if (walk.id === id) {
-          updatedWalk = {
-            ...walk,
-            ...input,
-            updated_at: new Date().toISOString(),
-          };
-          return updatedWalk;
+    // If not in cache, fetch from API
+    try {
+      const response = await fetch(`/api/walks/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
         }
-        return walk;
-      })
-    );
+        throw new Error(`Failed to fetch walk: ${response.statusText}`);
+      }
 
-    return updatedWalk;
+      const data = await response.json();
+      return data.walk;
+    } catch (err) {
+      console.error('Error fetching walk:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch walk');
+      return null;
+    }
   };
 
-  const deleteWalk = (id: string): boolean => {
-    let deleted = false;
-    setWalks(prevWalks => {
-      const filtered = prevWalks.filter(walk => walk.id !== id);
-      deleted = filtered.length !== prevWalks.length;
-      return filtered;
-    });
-    return deleted;
+  const createWalk = async (input: CreateWalkInput): Promise<Walk | null> => {
+    setError(null);
+
+    try {
+      const response = await fetch('/api/walks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to create walk: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const newWalk = data.walk;
+
+      // Add to local state (prepend to list)
+      setWalks(prevWalks => [newWalk, ...prevWalks]);
+
+      return newWalk;
+    } catch (err) {
+      console.error('Error creating walk:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create walk');
+      return null;
+    }
+  };
+
+  const updateWalk = async (id: string, input: UpdateWalkInput): Promise<Walk | null> => {
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/walks/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update walk: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const updatedWalk = data.walk;
+
+      // Update local state
+      setWalks(prevWalks =>
+        prevWalks.map(walk => (walk.id === id ? updatedWalk : walk))
+      );
+
+      return updatedWalk;
+    } catch (err) {
+      console.error('Error updating walk:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update walk');
+      return null;
+    }
+  };
+
+  const deleteWalk = async (id: string): Promise<boolean> => {
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/walks/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete walk: ${response.statusText}`);
+      }
+
+      // Remove from local state
+      setWalks(prevWalks => prevWalks.filter(walk => walk.id !== id));
+
+      return true;
+    } catch (err) {
+      console.error('Error deleting walk:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete walk');
+      return false;
+    }
   };
 
   return (
@@ -70,10 +166,12 @@ export function WalksProvider({ children }: { children: ReactNode }) {
       value={{
         walks,
         loading,
+        error,
         getWalk,
         createWalk,
         updateWalk,
         deleteWalk,
+        refreshWalks,
       }}
     >
       {children}
