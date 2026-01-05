@@ -34,13 +34,27 @@ export const sql = postgres(connectionString, {
 });
 
 /**
- * Type definitions for database tables
+ * Type definitions for database tables (v0.3.0)
  */
 export interface Activity {
   id: string;
   title: string;
   notes: string | null;
+
+  // Activity Metrics (Metric Units)
   duration_minutes: number;
+  distance_km: number | null;
+  elevation_gain_m: number | null;
+
+  // Social & Organization
+  people: string[];
+  tags: string[];
+
+  // Weather Context
+  weather_conditions: string | null;
+  temperature_c: number | null;
+
+  // Timestamps
   activity_date: string;
   created_at: string;
   updated_at: string;
@@ -52,6 +66,15 @@ export interface ActivityInsert {
   notes?: string | null;
   duration_minutes: number;
   activity_date: string;
+
+  // v0.3.0 optional fields
+  distance_km?: number | null;
+  elevation_gain_m?: number | null;
+  people?: string[];
+  tags?: string[];
+  weather_conditions?: string | null;
+  temperature_c?: number | null;
+
   created_at?: string;
   updated_at?: string;
 }
@@ -62,5 +85,14 @@ export interface ActivityUpdate {
   notes?: string | null;
   duration_minutes?: number;
   activity_date?: string;
+
+  // v0.3.0 optional fields
+  distance_km?: number | null;
+  elevation_gain_m?: number | null;
+  people?: string[];
+  tags?: string[];
+  weather_conditions?: string | null;
+  temperature_c?: number | null;
+
   updated_at?: string;
 }
