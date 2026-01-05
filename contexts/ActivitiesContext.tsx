@@ -1,17 +1,22 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Activity, CreateActivityInput, UpdateActivityInput } from '@/types/activity';
+import { Activity, CreateActivityInput, UpdateActivityInput, AutocompleteData } from '@/types/activity';
 
 interface ActivitiesContextType {
   activities: Activity[];
   loading: boolean;
   error: string | null;
+  // v0.3.0 autocomplete data
+  peopleSuggestions: string[];
+  tagSuggestions: string[];
+  // Methods
   getActivity: (id: string) => Promise<Activity | null>;
   createActivity: (input: CreateActivityInput) => Promise<Activity | null>;
   updateActivity: (id: string, input: UpdateActivityInput) => Promise<Activity | null>;
   deleteActivity: (id: string) => Promise<boolean>;
   refreshActivities: () => Promise<void>;
+  refreshAutocomplete: () => Promise<void>;
 }
 
 const ActivitiesContext = createContext<ActivitiesContextType | undefined>(undefined);
@@ -20,10 +25,13 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [peopleSuggestions, setPeopleSuggestions] = useState<string[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
-  // Load activities on mount
+  // Load activities and autocomplete data on mount
   useEffect(() => {
     refreshActivities();
+    refreshAutocomplete();
   }, []);
 
   const refreshActivities = async (): Promise<void> => {
@@ -44,6 +52,23 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
       setActivities([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshAutocomplete = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/activities/autocomplete');
+      if (!response.ok) {
+        console.warn('Failed to fetch autocomplete data');
+        return;
+      }
+
+      const data: AutocompleteData = await response.json();
+      setPeopleSuggestions(data.people || []);
+      setTagSuggestions(data.tags || []);
+    } catch (err) {
+      console.error('Error fetching autocomplete data:', err);
+      // Don't set error state for autocomplete failures (non-critical)
     }
   };
 
@@ -167,11 +192,14 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
         activities,
         loading,
         error,
+        peopleSuggestions,
+        tagSuggestions,
         getActivity,
         createActivity,
         updateActivity,
         deleteActivity,
         refreshActivities,
+        refreshAutocomplete,
       }}
     >
       {children}

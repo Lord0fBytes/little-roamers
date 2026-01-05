@@ -68,6 +68,14 @@ export async function PATCH(
     }
     if (body.activity_date !== undefined) updateData.activity_date = body.activity_date;
 
+    // v0.3.0 fields
+    if (body.distance_km !== undefined) updateData.distance_km = body.distance_km || null;
+    if (body.elevation_gain_m !== undefined) updateData.elevation_gain_m = body.elevation_gain_m || null;
+    if (body.people !== undefined) updateData.people = body.people || [];
+    if (body.tags !== undefined) updateData.tags = body.tags || [];
+    if (body.weather_conditions !== undefined) updateData.weather_conditions = body.weather_conditions || null;
+    if (body.temperature_c !== undefined) updateData.temperature_c = body.temperature_c || null;
+
     // Check if there's anything to update
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

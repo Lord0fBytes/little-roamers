@@ -52,10 +52,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert into database
+    // Insert into database with v0.3.0 fields
     const [activity] = await sql`
-      INSERT INTO activities (title, notes, duration_minutes, activity_date)
-      VALUES (${body.title}, ${body.notes || null}, ${body.duration_minutes}, ${body.activity_date})
+      INSERT INTO activities (
+        title,
+        notes,
+        duration_minutes,
+        activity_date,
+        distance_km,
+        elevation_gain_m,
+        people,
+        tags,
+        weather_conditions,
+        temperature_c
+      )
+      VALUES (
+        ${body.title},
+        ${body.notes || null},
+        ${body.duration_minutes},
+        ${body.activity_date},
+        ${body.distance_km || null},
+        ${body.elevation_gain_m || null},
+        ${body.people || []},
+        ${body.tags || []},
+        ${body.weather_conditions || null},
+        ${body.temperature_c || null}
+      )
       RETURNING *
     `;
 

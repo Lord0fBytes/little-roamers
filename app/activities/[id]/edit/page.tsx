@@ -15,7 +15,7 @@ export default function EditActivityPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const { getActivity, updateActivity } = useActivities();
+  const { getActivity, updateActivity, peopleSuggestions, tagSuggestions, refreshAutocomplete } = useActivities();
   const [activity, setActivity] = useState<Activity | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +31,8 @@ export default function EditActivityPage({
   const handleSubmit = async (data: CreateActivityInput) => {
     const result = await updateActivity(id, data);
     if (result) {
+      // Refresh autocomplete data when activity is updated
+      await refreshAutocomplete();
       router.push(`/activities/${id}`);
     }
   };
@@ -72,6 +74,8 @@ export default function EditActivityPage({
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             submitLabel="Update Activity"
+            peopleSuggestions={peopleSuggestions}
+            tagSuggestions={tagSuggestions}
           />
         </div>
       </div>

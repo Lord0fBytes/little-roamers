@@ -3,12 +3,16 @@
 import React, { useState } from 'react';
 import { CreateActivityInput, Activity } from '@/types/activity';
 import Button from './Button';
+import TagInput from './TagInput';
+import PeopleTagInput from './PeopleTagInput';
 
 interface ActivityFormProps {
   initialData?: Activity;
   onSubmit: (data: CreateActivityInput) => void;
   onCancel: () => void;
   submitLabel?: string;
+  peopleSuggestions?: string[];
+  tagSuggestions?: string[];
 }
 
 export default function ActivityForm({
@@ -16,7 +20,10 @@ export default function ActivityForm({
   onSubmit,
   onCancel,
   submitLabel = 'Save Activity',
+  peopleSuggestions = [],
+  tagSuggestions = [],
 }: ActivityFormProps) {
+  const [showFullEntry, setShowFullEntry] = useState(false);
   const [formData, setFormData] = useState<CreateActivityInput>({
     title: initialData?.title || '',
     notes: initialData?.notes || '',
@@ -24,6 +31,13 @@ export default function ActivityForm({
     activity_date: initialData?.activity_date
       ? new Date(initialData.activity_date).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
+    // v0.3.0 optional fields
+    distance_km: initialData?.distance_km || undefined,
+    elevation_gain_m: initialData?.elevation_gain_m || undefined,
+    people: initialData?.people || [],
+    tags: initialData?.tags || [],
+    weather_conditions: initialData?.weather_conditions || '',
+    temperature_c: initialData?.temperature_c || undefined,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,17 +46,41 @@ export default function ActivityForm({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'duration_minutes' ? parseInt(value) || 0 : value,
-    }));
+    setFormData((prev) => {
+      const newValue =
+        name === 'duration_minutes' || name === 'elevation_gain_m' || name === 'temperature_c'
+          ? parseInt(value) || undefined
+          : name === 'distance_km'
+          ? parseFloat(value) || undefined
+          : value;
+
+      return {
+        ...prev,
+        [name]: newValue,
+      };
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Quick Entry / Full Entry Toggle */}
+      <div className="flex justify-between items-center pb-2 border-b">
+        <h3 className="text-lg font-medium">
+          {showFullEntry ? 'Full Entry Mode' : 'Quick Entry Mode'}
+        </h3>
+        <button
+          type="button"
+          onClick={() => setShowFullEntry(!showFullEntry)}
+          className="text-sm text-emerald-600 hover:text-emerald-700"
+        >
+          {showFullEntry ? '← Switch to Quick Entry' : 'Add More Details →'}
+        </button>
+      </div>
+
+      {/* QUICK ENTRY FIELDS (always visible) */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
           Title *
@@ -59,36 +97,38 @@ export default function ActivityForm({
         />
       </div>
 
-      <div>
-        <label htmlFor="activity_date" className="block text-sm font-medium text-gray-700 mb-1">
-          Date *
-        </label>
-        <input
-          type="date"
-          id="activity_date"
-          name="activity_date"
-          value={formData.activity_date}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        />
-      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="activity_date" className="block text-sm font-medium text-gray-700 mb-1">
+            Date *
+          </label>
+          <input
+            type="date"
+            id="activity_date"
+            name="activity_date"
+            value={formData.activity_date}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>
 
-      <div>
-        <label htmlFor="duration_minutes" className="block text-sm font-medium text-gray-700 mb-1">
-          Duration (minutes) *
-        </label>
-        <input
-          type="number"
-          id="duration_minutes"
-          name="duration_minutes"
-          value={formData.duration_minutes || ''}
-          onChange={handleChange}
-          required
-          min="1"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          placeholder="30"
-        />
+        <div>
+          <label htmlFor="duration_minutes" className="block text-sm font-medium text-gray-700 mb-1">
+            Duration (minutes) *
+          </label>
+          <input
+            type="number"
+            id="duration_minutes"
+            name="duration_minutes"
+            value={formData.duration_minutes || ''}
+            onChange={handleChange}
+            required
+            min="1"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            placeholder="30"
+          />
+        </div>
       </div>
 
       <div>
@@ -100,12 +140,110 @@ export default function ActivityForm({
           name="notes"
           value={formData.notes}
           onChange={handleChange}
-          rows={4}
+          rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
           placeholder="Add notes about your activity..."
         />
       </div>
 
+      {/* FULL ENTRY FIELDS (shown when expanded) */}
+      {showFullEntry && (
+        <div className="space-y-4 pt-4 border-t">
+          <h4 className="font-medium text-gray-700">Additional Details</h4>
+
+          {/* Metrics */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="distance_km" className="block text-sm font-medium text-gray-700 mb-1">
+                Distance (km)
+              </label>
+              <input
+                type="number"
+                id="distance_km"
+                name="distance_km"
+                value={formData.distance_km || ''}
+                onChange={handleChange}
+                step="0.1"
+                min="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="5.2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="elevation_gain_m" className="block text-sm font-medium text-gray-700 mb-1">
+                Elevation Gain (m)
+              </label>
+              <input
+                type="number"
+                id="elevation_gain_m"
+                name="elevation_gain_m"
+                value={formData.elevation_gain_m || ''}
+                onChange={handleChange}
+                min="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="250"
+              />
+            </div>
+          </div>
+
+          {/* People Tags */}
+          <PeopleTagInput
+            people={formData.people || []}
+            onChange={(people) => setFormData((prev) => ({ ...prev, people }))}
+            suggestions={peopleSuggestions}
+          />
+
+          {/* General Tags */}
+          <TagInput
+            tags={formData.tags || []}
+            onChange={(tags) => setFormData((prev) => ({ ...prev, tags }))}
+            suggestions={tagSuggestions}
+          />
+
+          {/* Weather */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="weather_conditions" className="block text-sm font-medium text-gray-700 mb-1">
+                Weather
+              </label>
+              <select
+                id="weather_conditions"
+                name="weather_conditions"
+                value={formData.weather_conditions}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="">Select...</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Partly Cloudy">Partly Cloudy</option>
+                <option value="Cloudy">Cloudy</option>
+                <option value="Rainy">Rainy</option>
+                <option value="Snowy">Snowy</option>
+                <option value="Windy">Windy</option>
+                <option value="Foggy">Foggy</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="temperature_c" className="block text-sm font-medium text-gray-700 mb-1">
+                Temperature (°C)
+              </label>
+              <input
+                type="number"
+                id="temperature_c"
+                name="temperature_c"
+                value={formData.temperature_c || ''}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="18"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Form Actions */}
       <div className="flex gap-2 pt-4">
         <Button type="submit" variant="primary" className="flex-1">
           {submitLabel}

@@ -8,11 +8,13 @@ import { CreateActivityInput } from '@/types/activity';
 
 export default function NewActivityPage() {
   const router = useRouter();
-  const { createActivity } = useActivities();
+  const { createActivity, peopleSuggestions, tagSuggestions, refreshAutocomplete } = useActivities();
 
   const handleSubmit = async (data: CreateActivityInput) => {
     const result = await createActivity(data);
     if (result) {
+      // Refresh autocomplete data when a new activity is created
+      await refreshAutocomplete();
       router.push('/');
     }
   };
@@ -30,6 +32,8 @@ export default function NewActivityPage() {
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             submitLabel="Save Activity"
+            peopleSuggestions={peopleSuggestions}
+            tagSuggestions={tagSuggestions}
           />
         </div>
       </div>

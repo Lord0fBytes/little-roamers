@@ -92,12 +92,74 @@ export default function ActivityDetailPage({
             <p className="text-gray-600">{formatDate(activity.activity_date)}</p>
           </div>
 
-          <div className="mb-6">
+          {/* Activity Metrics */}
+          <div className="mb-6 flex flex-wrap gap-3">
             <div className="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-lg font-medium">
-              Duration: {formatDuration(activity.duration_minutes)}
+              ⏱️ {formatDuration(activity.duration_minutes)}
             </div>
+            {activity.distance_km && (
+              <div className="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium">
+                📏 {activity.distance_km} km
+              </div>
+            )}
+            {activity.elevation_gain_m && (
+              <div className="inline-block bg-purple-100 text-purple-700 px-4 py-2 rounded-lg font-medium">
+                ⛰️ {activity.elevation_gain_m} m elevation
+              </div>
+            )}
           </div>
 
+          {/* Weather Info */}
+          {(activity.weather_conditions || activity.temperature_c) && (
+            <div className="mb-6 flex flex-wrap gap-3">
+              {activity.weather_conditions && (
+                <div className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg font-medium">
+                  {activity.weather_conditions}
+                </div>
+              )}
+              {activity.temperature_c !== null && activity.temperature_c !== undefined && (
+                <div className="inline-block bg-orange-100 text-orange-700 px-4 py-2 rounded-lg font-medium">
+                  🌡️ {activity.temperature_c}°C
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* People Tags */}
+          {activity.people && activity.people.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-700 mb-2">People</h2>
+              <div className="flex flex-wrap gap-2">
+                {activity.people.map((person) => (
+                  <span
+                    key={person}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                  >
+                    {person}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* General Tags */}
+          {activity.tags && activity.tags.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-700 mb-2">Tags</h2>
+              <div className="flex flex-wrap gap-2">
+                {activity.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-emerald-100 text-emerald-800"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
           {activity.notes && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Notes</h2>
