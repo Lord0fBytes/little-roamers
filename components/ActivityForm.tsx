@@ -5,6 +5,8 @@ import { CreateActivityInput, Activity } from '@/types/activity';
 import Button from './Button';
 import TagInput from './TagInput';
 import PeopleTagInput from './PeopleTagInput';
+import ImageUpload from './ImageUpload';
+import { getImageUrl } from '@/lib/garage';
 
 interface ActivityFormProps {
   initialData?: Activity;
@@ -24,6 +26,8 @@ export default function ActivityForm({
   tagSuggestions = [],
 }: ActivityFormProps) {
   const [showFullEntry, setShowFullEntry] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<CreateActivityInput>({
     title: initialData?.title || '',
     notes: initialData?.notes || '',
@@ -38,11 +42,44 @@ export default function ActivityForm({
     tags: initialData?.tags || [],
     weather_conditions: initialData?.weather_conditions || '',
     temperature_c: initialData?.temperature_c || undefined,
+    // v0.4.0 optional fields
+    image_key: initialData?.image_key || undefined,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setIsUploading(true);
+
+    try {
+      let finalData = { ...formData };
+
+      // Upload image if a new file was selected
+      if (imageFile) {
+        const formDataToUpload = new FormData();
+        formDataToUpload.append('image', imageFile);
+
+        const response = await fetch('/api/images/upload', {
+          method: 'POST',
+          body: formDataToUpload,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to upload image');
+        }
+
+        const result = await response.json();
+        finalData.image_key = result.imageKey;
+      }
+
+      // Submit the activity with the image_key
+      onSubmit(finalData);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleChange = (
@@ -146,6 +183,13 @@ export default function ActivityForm({
         />
       </div>
 
+      {/* Image Upload (v0.4.0) */}
+      <ImageUpload
+        onImageSelect={setImageFile}
+        currentImageUrl={initialData?.image_key ? getImageUrl(initialData.image_key) : null}
+        disabled={isUploading}
+      />
+
       {/* FULL ENTRY FIELDS (shown when expanded) */}
       {showFullEntry && (
         <div className="space-y-4 pt-4 border-t">
@@ -245,10 +289,10 @@ export default function ActivityForm({
 
       {/* Form Actions */}
       <div className="flex gap-2 pt-4">
-        <Button type="submit" variant="primary" className="flex-1">
-          {submitLabel}
+        <Button type="submit" variant="primary" className="flex-1" disabled={isUploading}>
+          {isUploading ? 'Uploading...' : submitLabel}
         </Button>
-        <Button type="button" variant="secondary" onClick={onCancel}>
+        <Button type="button" variant="secondary" onClick={onCancel} disabled={isUploading}>
           Cancel
         </Button>
       </div>

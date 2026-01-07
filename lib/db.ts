@@ -34,7 +34,7 @@ export const sql = postgres(connectionString, {
 });
 
 /**
- * Type definitions for database tables (v0.3.0)
+ * Type definitions for database tables (v0.4.0)
  */
 export interface Activity {
   id: string;
@@ -53,6 +53,9 @@ export interface Activity {
   // Weather Context
   weather_conditions: string | null;
   temperature_c: number | null;
+
+  // Media (v0.4.0+)
+  image_key: string | null;
 
   // Timestamps
   activity_date: string;
@@ -75,6 +78,9 @@ export interface ActivityInsert {
   weather_conditions?: string | null;
   temperature_c?: number | null;
 
+  // v0.4.0 optional fields
+  image_key?: string | null;
+
   created_at?: string;
   updated_at?: string;
 }
@@ -93,6 +99,9 @@ export interface ActivityUpdate {
   tags?: string[];
   weather_conditions?: string | null;
   temperature_c?: number | null;
+
+  // v0.4.0 optional fields
+  image_key?: string | null;
 
   updated_at?: string;
 }

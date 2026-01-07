@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert into database with v0.3.0 fields
+    // Insert into database with v0.4.0 fields
     const [activity] = await sql`
       INSERT INTO activities (
         title,
@@ -64,7 +64,8 @@ export async function POST(request: NextRequest) {
         people,
         tags,
         weather_conditions,
-        temperature_c
+        temperature_c,
+        image_key
       )
       VALUES (
         ${body.title},
@@ -76,7 +77,8 @@ export async function POST(request: NextRequest) {
         ${body.people || []},
         ${body.tags || []},
         ${body.weather_conditions || null},
-        ${body.temperature_c || null}
+        ${body.temperature_c || null},
+        ${body.image_key || null}
       )
       RETURNING *
     `;

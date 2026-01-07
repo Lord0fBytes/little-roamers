@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { UpdateActivityInput } from '@/types/activity';
+import { deleteImage } from '@/lib/garage';
 
 /**
  * GET /api/activities/[id]
@@ -76,6 +77,15 @@ export async function PATCH(
     if (body.weather_conditions !== undefined) updateData.weather_conditions = body.weather_conditions || null;
     if (body.temperature_c !== undefined) updateData.temperature_c = body.temperature_c || null;
 
+    // v0.4.0 fields - Handle image replacement
+    let oldImageKey: string | null = null;
+    if (body.image_key !== undefined) {
+      // Get the current image_key before updating
+      const [current] = await sql`SELECT image_key FROM activities WHERE id = ${id}`;
+      oldImageKey = current?.image_key || null;
+      updateData.image_key = body.image_key || null;
+    }
+
     // Check if there's anything to update
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -91,6 +101,11 @@ export async function PATCH(
       WHERE id = ${id}
       RETURNING *
     `;
+
+    // Delete old image from Garage if it was replaced (and it exists)
+    if (oldImageKey && oldImageKey !== body.image_key) {
+      await deleteImage(oldImageKey);
+    }
 
     if (!activity) {
       return NextResponse.json(
@@ -112,6 +127,7 @@ export async function PATCH(
 /**
  * DELETE /api/activities/[id]
  * Delete an activity by ID
+ * Also deletes associated image from Garage if it exists
  */
 export async function DELETE(
   request: NextRequest,
@@ -120,10 +136,29 @@ export async function DELETE(
   try {
     const { id } = await params;
 
+    // Get the activity to find the image_key (if any)
+    const [activity] = await sql`
+      SELECT image_key FROM activities
+      WHERE id = ${id}
+    `;
+
+    if (!activity) {
+      return NextResponse.json(
+        { error: 'Activity not found' },
+        { status: 404 }
+      );
+    }
+
+    // Delete from database first
     await sql`
       DELETE FROM activities
       WHERE id = ${id}
     `;
+
+    // Delete image from Garage if it exists
+    if (activity.image_key) {
+      await deleteImage(activity.image_key);
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
