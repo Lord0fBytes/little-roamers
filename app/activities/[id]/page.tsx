@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/garage';
+import { formatDetailDate } from '@/lib/dateUtils';
 
 export default function ActivityDetailPage({
   params,
@@ -61,15 +62,6 @@ export default function ActivityDetailPage({
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
       return `${minutes} minutes`;
@@ -91,7 +83,7 @@ export default function ActivityDetailPage({
         <div className="bg-white rounded-card shadow-card p-6 border border-warm-200">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-warm-900 mb-2">{activity.title}</h1>
-            <p className="text-warm-600">{formatDate(activity.activity_date)}</p>
+            <p className="text-warm-600">{formatDetailDate(activity.activity_date)}</p>
           </div>
 
           {/* Activity Image (v0.4.0) */}

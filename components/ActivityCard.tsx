@@ -5,31 +5,13 @@ import { Activity } from '@/types/activity';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/garage';
+import { formatActivityDate } from '@/lib/dateUtils';
 
 interface ActivityCardProps {
   activity: Activity;
 }
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today';
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
-    } else {
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
-      });
-    }
-  };
-
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
       return `${minutes}m`;
@@ -65,7 +47,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               </span>
             </div>
             <div className="text-sm text-warm-600">
-              {formatDate(activity.activity_date)}
+              {formatActivityDate(activity.activity_date)}
             </div>
           </div>
 
