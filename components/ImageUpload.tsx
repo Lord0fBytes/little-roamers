@@ -88,13 +88,13 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-gray-300">
         Photo
       </label>
 
       {/* Preview or Upload Area */}
       {previewUrl ? (
-        <div className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative w-full aspect-video bg-gray-700 rounded-lg overflow-hidden">
           <Image
             src={previewUrl}
             alt="Activity preview"
@@ -102,11 +102,11 @@ export default function ImageUpload({
             className="object-cover"
           />
           {!disabled && (
-            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-opacity flex items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-opacity flex items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={handleClick}
-                className="px-4 py-2 bg-white text-gray-900 rounded-lg font-medium opacity-0 hover:opacity-100 transition-opacity"
+                className="px-4 py-2 bg-gray-700 text-gray-100 rounded-lg font-medium opacity-0 hover:opacity-100 transition-opacity"
               >
                 Change Photo
               </button>
@@ -132,8 +132,8 @@ export default function ImageUpload({
             transition-colors cursor-pointer
             ${
               isDragging
-                ? 'border-emerald-500 bg-emerald-50'
-                : 'border-gray-300 bg-gray-50 hover:border-emerald-400 hover:bg-emerald-50'
+                ? 'border-emerald-500 bg-emerald-900/30'
+                : 'border-gray-600 bg-gray-700 hover:border-emerald-500 hover:bg-emerald-900/20'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -152,10 +152,10 @@ export default function ImageUpload({
             />
           </svg>
           <div className="text-center">
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-sm text-gray-300 font-medium">
               Click to upload or drag and drop
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               JPEG, PNG, WebP, HEIC (max 10MB)
             </p>
           </div>
@@ -174,7 +174,7 @@ export default function ImageUpload({
       />
 
       {/* Helper Text */}
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-400">
         📸 Tap to use camera or select from gallery
       </p>
     </div>

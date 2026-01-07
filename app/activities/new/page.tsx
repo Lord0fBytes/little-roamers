@@ -24,10 +24,10 @@ export default function NewActivityPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-900">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Log an Activity</h1>
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <h1 className="text-2xl font-bold text-gray-100 mb-6">Log an Activity</h1>
+        <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
           <ActivityForm
             onSubmit={handleSubmit}
             onCancel={handleCancel}

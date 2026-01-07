@@ -15,9 +15,9 @@ export default function Button({
 
   const variantStyles = {
     primary: 'bg-emerald-600 text-white hover:bg-emerald-700',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+    secondary: 'bg-gray-700 text-gray-100 hover:bg-gray-600',
     danger: 'bg-red-600 text-white hover:bg-red-700',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
+    ghost: 'bg-transparent text-gray-300 hover:bg-gray-800',
   };
 
   return (

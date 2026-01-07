@@ -57,7 +57,7 @@ export default function TagInput({
 
   return (
     <div className="space-y-2">
-      {label && <label className="block text-sm font-medium">{label}</label>}
+      {label && <label className="block text-sm font-medium text-gray-300">{label}</label>}
 
       {/* Tag chips display */}
       {tags.length > 0 && (
@@ -65,13 +65,13 @@ export default function TagInput({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-emerald-100 text-emerald-800"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-emerald-900/30 text-emerald-300"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => removeTag(tag)}
-                className="hover:text-emerald-900 font-bold"
+                className="hover:text-emerald-200 font-bold"
                 aria-label={`Remove ${tag}`}
               >
                 ×
@@ -91,18 +91,18 @@ export default function TagInput({
           onFocus={() => setShowSuggestions(inputValue.length > 0)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-gray-400"
         />
 
         {/* Autocomplete suggestions dropdown */}
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"
                 onClick={() => addTag(suggestion)}
-                className="w-full px-4 py-2 text-left hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none"
+                className="w-full px-4 py-2 text-left text-gray-100 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
               >
                 {suggestion}
               </button>
@@ -111,7 +111,7 @@ export default function TagInput({
         )}
       </div>
 
-      <p className="text-sm text-gray-500">Press Enter to add, click × to remove</p>
+      <p className="text-sm text-gray-400">Press Enter to add, click × to remove</p>
     </div>
   );
 }
