@@ -6,6 +6,8 @@ import { useActivities } from '@/contexts/ActivitiesContext';
 import { Activity } from '@/types/activity';
 import Button from '@/components/Button';
 import Link from 'next/link';
+import Image from 'next/image';
+import { getImageUrl } from '@/lib/garage';
 
 export default function ActivityDetailPage({
   params,
@@ -91,6 +93,19 @@ export default function ActivityDetailPage({
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{activity.title}</h1>
             <p className="text-gray-600">{formatDate(activity.activity_date)}</p>
           </div>
+
+          {/* Activity Image (v0.4.0) */}
+          {activity.image_key && (
+            <div className="mb-6 relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden">
+              <Image
+                src={getImageUrl(activity.image_key) || ''}
+                alt={activity.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
+          )}
 
           {/* Activity Metrics */}
           <div className="mb-6 flex flex-wrap gap-3">

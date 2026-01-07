@@ -22,11 +22,11 @@ const sql = postgres(connectionString);
 
 async function runMigration() {
   try {
-    console.log('🔄 Applying v0.3.0 migration...');
-    console.log('Adding enhanced fields to activities table...\n');
+    console.log('🔄 Applying v0.4.0 migration...');
+    console.log('Adding image_key field to activities table...\n');
 
     // Read migration file
-    const migrationPath = path.join(__dirname, '../migrations/v0.3.0-add-enhanced-fields.sql');
+    const migrationPath = path.join(__dirname, '../migrations/v0.4.0-add-image-field.sql');
     const migrationSQL = fs.readFileSync(migrationPath, 'utf-8');
 
     // Execute migration
