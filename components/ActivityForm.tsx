@@ -134,7 +134,7 @@ export default function ActivityForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="activity_date" className="block text-sm font-semibold text-warm-700 mb-1.5">
             Date *
@@ -196,7 +196,7 @@ export default function ActivityForm({
           <h4 className="font-medium text-warm-900">Additional Details</h4>
 
           {/* Metrics */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="distance_km" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Distance (km)
@@ -246,7 +246,7 @@ export default function ActivityForm({
           />
 
           {/* Weather */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="weather_conditions" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Weather
