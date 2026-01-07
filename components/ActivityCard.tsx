@@ -41,10 +41,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
 
   return (
     <Link href={`/activities/${activity.id}`}>
-      <div className="bg-gray-800 rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden cursor-pointer border border-gray-700">
+      <div className="bg-white rounded-card shadow-card hover:shadow-hover transition-all duration-300 border border-warm-200 hover-lift activity-card overflow-hidden cursor-pointer">
         {/* Activity Image (v0.4.0) */}
         {activity.image_key && (
-          <div className="relative w-full aspect-video bg-gray-700">
+          <div className="relative w-full aspect-video bg-warm-100">
             <Image
               src={getImageUrl(activity.image_key) || ''}
               alt={activity.title}
@@ -59,12 +59,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           {/* Header: Title and Duration */}
           <div className="mb-3">
             <div className="flex justify-between items-start gap-2 mb-1">
-              <h3 className="text-lg font-semibold text-gray-100 flex-1">{activity.title}</h3>
-              <span className="bg-emerald-900/50 text-emerald-300 px-2.5 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              <h3 className="text-lg font-semibold text-warm-900 flex-1">{activity.title}</h3>
+              <span className="bg-gradient-to-br from-sage-light to-sage text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-soft whitespace-nowrap">
                 ⏱️ {formatDuration(activity.duration_minutes)}
               </span>
             </div>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-warm-600">
               {formatDate(activity.activity_date)}
             </div>
           </div>
@@ -73,17 +73,17 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           {(activity.distance_km || activity.elevation_gain_m || activity.weather_conditions) && (
             <div className="flex flex-wrap gap-2 mb-3">
               {activity.distance_km && (
-                <span className="inline-flex items-center bg-blue-900/50 text-blue-300 px-2.5 py-1 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center bg-sky/20 text-sky-dark border border-sky/30 px-2.5 py-1 rounded-full text-sm font-medium">
                   📏 {activity.distance_km} km
                 </span>
               )}
               {activity.elevation_gain_m && (
-                <span className="inline-flex items-center bg-purple-900/50 text-purple-300 px-2.5 py-1 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center bg-clay/20 text-clay-dark border border-clay/30 px-2.5 py-1 rounded-full text-xs font-medium">
                   ⛰️ {activity.elevation_gain_m} m
                 </span>
               )}
               {activity.weather_conditions && (
-                <span className="inline-flex items-center bg-amber-900/50 text-amber-300 px-2.5 py-1 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center bg-sunshine/30 text-warm-800 border border-sunshine/50 px-2.5 py-1 rounded-full text-xs font-medium">
                   {activity.weather_conditions}
                 </span>
               )}
@@ -96,13 +96,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               {activity.people.slice(0, 3).map((person) => (
                 <span
                   key={person}
-                  className="inline-flex items-center bg-blue-900/30 text-blue-300 px-2 py-0.5 rounded-full text-xs font-medium"
+                  className="inline-flex items-center bg-sky/20 text-sky-dark px-2.5 py-1 rounded-full text-xs font-medium border border-sky/30"
                 >
                   {person}
                 </span>
               ))}
               {activity.people.length > 3 && (
-                <span className="inline-flex items-center bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center bg-warm-200 text-warm-700 px-2.5 py-1 rounded-full text-xs font-medium">
                   +{activity.people.length - 3}
                 </span>
               )}
@@ -115,13 +115,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               {activity.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center bg-emerald-900/30 text-emerald-300 px-2 py-0.5 rounded-full text-xs font-medium"
+                  className="inline-flex items-center bg-sage/20 text-sage-dark px-2.5 py-1 rounded-full text-xs font-medium border border-sage/30"
                 >
                   {tag}
                 </span>
               ))}
               {activity.tags.length > 3 && (
-                <span className="inline-flex items-center bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center bg-warm-200 text-warm-700 px-2.5 py-1 rounded-full text-xs font-medium">
                   +{activity.tags.length - 3}
                 </span>
               )}
@@ -130,7 +130,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
 
           {/* Notes */}
           {activity.notes && (
-            <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">{activity.notes}</p>
+            <p className="text-warm-400 text-sm line-clamp-2 leading-relaxed">{activity.notes}</p>
           )}
         </div>
       </div>

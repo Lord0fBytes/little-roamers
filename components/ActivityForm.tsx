@@ -104,14 +104,14 @@ export default function ActivityForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Quick Entry / Full Entry Toggle */}
-      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-        <h3 className="text-lg font-medium text-gray-100">
+      <div className="flex justify-between items-center pb-2 border-b border-warm-200">
+        <h3 className="text-lg font-medium text-warm-900">
           {showFullEntry ? 'Full Entry Mode' : 'Quick Entry Mode'}
         </h3>
         <button
           type="button"
           onClick={() => setShowFullEntry(!showFullEntry)}
-          className="text-sm text-emerald-400 hover:text-emerald-300"
+          className="text-sm text-sage-dark hover:text-sage font-medium transition-colors"
         >
           {showFullEntry ? '← Switch to Quick Entry' : 'Add More Details →'}
         </button>
@@ -119,7 +119,7 @@ export default function ActivityForm({
 
       {/* QUICK ENTRY FIELDS (always visible) */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="title" className="block text-sm font-semibold text-warm-700 mb-1.5">
           Title *
         </label>
         <input
@@ -129,14 +129,14 @@ export default function ActivityForm({
           value={formData.title}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
           placeholder="Morning hike in the woods"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="activity_date" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="activity_date" className="block text-sm font-semibold text-warm-700 mb-1.5">
             Date *
           </label>
           <input
@@ -146,12 +146,12 @@ export default function ActivityForm({
             value={formData.activity_date}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
           />
         </div>
 
         <div>
-          <label htmlFor="duration_minutes" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="duration_minutes" className="block text-sm font-semibold text-warm-700 mb-1.5">
             Duration (minutes) *
           </label>
           <input
@@ -162,14 +162,14 @@ export default function ActivityForm({
             onChange={handleChange}
             required
             min="1"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
             placeholder="30"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="notes" className="block text-sm font-semibold text-warm-700 mb-1.5">
           Notes
         </label>
         <textarea
@@ -178,7 +178,7 @@ export default function ActivityForm({
           value={formData.notes}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
           placeholder="Add notes about your activity..."
         />
       </div>
@@ -192,13 +192,13 @@ export default function ActivityForm({
 
       {/* FULL ENTRY FIELDS (shown when expanded) */}
       {showFullEntry && (
-        <div className="space-y-4 pt-4 border-t border-gray-700">
-          <h4 className="font-medium text-gray-100">Additional Details</h4>
+        <div className="space-y-4 pt-4 border-t border-warm-200">
+          <h4 className="font-medium text-warm-900">Additional Details</h4>
 
           {/* Metrics */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="distance_km" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="distance_km" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Distance (km)
               </label>
               <input
@@ -209,13 +209,13 @@ export default function ActivityForm({
                 onChange={handleChange}
                 step="0.1"
                 min="0"
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
                 placeholder="5.2"
               />
             </div>
 
             <div>
-              <label htmlFor="elevation_gain_m" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="elevation_gain_m" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Elevation Gain (m)
               </label>
               <input
@@ -225,7 +225,7 @@ export default function ActivityForm({
                 value={formData.elevation_gain_m || ''}
                 onChange={handleChange}
                 min="0"
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
                 placeholder="250"
               />
             </div>
@@ -248,7 +248,7 @@ export default function ActivityForm({
           {/* Weather */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="weather_conditions" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="weather_conditions" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Weather
               </label>
               <select
@@ -256,7 +256,7 @@ export default function ActivityForm({
                 name="weather_conditions"
                 value={formData.weather_conditions}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
               >
                 <option value="">Select...</option>
                 <option value="Sunny">Sunny</option>
@@ -270,7 +270,7 @@ export default function ActivityForm({
             </div>
 
             <div>
-              <label htmlFor="temperature_c" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="temperature_c" className="block text-sm font-semibold text-warm-700 mb-1.5">
                 Temperature (°C)
               </label>
               <input
@@ -279,7 +279,7 @@ export default function ActivityForm({
                 name="temperature_c"
                 value={formData.temperature_c || ''}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
                 placeholder="18"
               />
             </div>

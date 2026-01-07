@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
+import { Nunito } from 'next/font/google';
 import './globals.css';
 import { ActivitiesProvider } from '@/contexts/ActivitiesContext';
+
+const nunito = Nunito({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-nunito',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Little Roamers - Growing Up Outdoors',
@@ -13,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={nunito.variable}>
       <body>
         <ActivitiesProvider>
           {children}

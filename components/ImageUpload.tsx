@@ -88,13 +88,13 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">
+      <label className="block text-sm font-semibold text-warm-700 mb-1.5">
         Photo
       </label>
 
       {/* Preview or Upload Area */}
       {previewUrl ? (
-        <div className="relative w-full aspect-video bg-gray-700 rounded-lg overflow-hidden">
+        <div className="relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden">
           <Image
             src={previewUrl}
             alt="Activity preview"
@@ -106,14 +106,14 @@ export default function ImageUpload({
               <button
                 type="button"
                 onClick={handleClick}
-                className="px-4 py-2 bg-gray-700 text-gray-100 rounded-lg font-medium opacity-0 hover:opacity-100 transition-opacity"
+                className="px-4 py-2 bg-warm-800 text-white rounded-xl font-medium opacity-0 hover:opacity-100 transition-opacity"
               >
                 Change Photo
               </button>
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium opacity-0 hover:opacity-100 transition-opacity"
+                className="px-4 py-2 bg-red-600 text-white rounded-xl font-medium opacity-0 hover:opacity-100 transition-opacity"
               >
                 Remove
               </button>
@@ -127,19 +127,19 @@ export default function ImageUpload({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={`
-            w-full aspect-video border-2 border-dashed rounded-lg
-            flex flex-col items-center justify-center gap-2
-            transition-colors cursor-pointer
+            w-full aspect-video border-2 border-dashed rounded-card
+            flex flex-col items-center justify-center gap-3
+            transition-all duration-300 cursor-pointer
             ${
               isDragging
-                ? 'border-emerald-500 bg-emerald-900/30'
-                : 'border-gray-600 bg-gray-700 hover:border-emerald-500 hover:bg-emerald-900/20'
+                ? 'border-sage bg-sage/10 scale-[0.98]'
+                : 'border-warm-300 bg-warm-50 hover:border-sage hover:bg-sage/5'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
           <svg
-            className="w-12 h-12 text-gray-400"
+            className="w-12 h-12 text-warm-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -152,10 +152,10 @@ export default function ImageUpload({
             />
           </svg>
           <div className="text-center">
-            <p className="text-sm text-gray-300 font-medium">
+            <p className="text-sm text-warm-700 font-medium">
               Click to upload or drag and drop
             </p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-warm-500 mt-1">
               JPEG, PNG, WebP, HEIC (max 10MB)
             </p>
           </div>
@@ -174,7 +174,7 @@ export default function ImageUpload({
       />
 
       {/* Helper Text */}
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-warm-500">
         📸 Tap to use camera or select from gallery
       </p>
     </div>

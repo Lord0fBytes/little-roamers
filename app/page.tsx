@@ -21,12 +21,12 @@ export default function Home() {
   // Error State
   if (error && !loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-warm-50 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">⚠️</div>
           <h1 className="text-2xl font-bold text-red-400 mb-4">Error Loading Activities</h1>
-          <p className="text-gray-400 mb-4">{error}</p>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-warm-600 mb-4">{error}</p>
+          <p className="text-sm text-warm-500 mb-6">
             Make sure your PostgreSQL database is set up correctly and environment variables are configured.
           </p>
           <Button onClick={handleRefresh} variant="primary">
@@ -38,12 +38,12 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-900">
+    <main className="min-h-screen bg-warm-50 page-enter">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-100 mb-2">Little Roamers</h1>
-          <p className="text-gray-400 text-lg">Growing Up Outdoors</p>
+        <div className="bg-gradient-to-br from-cream via-warm-50 to-sand py-12 mb-8 -mx-4 px-4">
+          <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
+          <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
         </div>
 
         {/* Action Bar */}
@@ -57,7 +57,7 @@ export default function Home() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing || loading}
-            className="text-sm text-gray-400 hover:text-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="text-sm text-warm-600 hover:text-sage transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <span className={isRefreshing ? 'animate-spin' : ''}>🔄</span>
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
@@ -73,10 +73,10 @@ export default function Home() {
           </div>
         ) : activities.length === 0 ? (
           /* Empty State */
-          <div className="bg-gray-800 rounded-2xl shadow-sm p-12 md:p-16 text-center border border-gray-700">
+          <div className="bg-white rounded-card shadow-card p-12 md:p-16 text-center border border-warm-200">
             <div className="text-7xl mb-6">🌲</div>
-            <h2 className="text-2xl font-bold text-gray-100 mb-3">No Activities Yet</h2>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-warm-900 mb-3">No Activities Yet</h2>
+            <p className="text-warm-600 mb-8 max-w-md mx-auto">
               Start logging your outdoor adventures and watch your memories grow. Every moment outside counts!
             </p>
             <Link href="/activities/new">
@@ -96,7 +96,7 @@ export default function Home() {
 
         {/* Footer Stats */}
         {activities.length > 0 && (
-          <div className="mt-12 text-center text-sm text-gray-500">
+          <div className="mt-12 text-center text-sm text-warm-500">
             {activities.length} {activities.length === 1 ? 'activity' : 'activities'} logged
           </div>
         )}
