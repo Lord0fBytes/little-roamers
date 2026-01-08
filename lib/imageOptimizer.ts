@@ -1,9 +1,11 @@
 /**
  * Image Optimization Utilities
  * Uses sharp to resize and compress images before upload
+ * Handles HEIC/HEIF conversion using heic-convert
  */
 
 import sharp from 'sharp';
+import convert from 'heic-convert';
 
 // Configuration
 const MAX_WIDTH = 2000;
@@ -36,8 +38,50 @@ export async function optimizeImage(
   originalMimeType?: string
 ): Promise<OptimizedImage> {
   try {
-    // Initialize sharp instance
-    let pipeline = sharp(inputBuffer);
+    let processBuffer = inputBuffer;
+    let isHeic = false;
+
+    // Check if it's HEIC by MIME type
+    if (originalMimeType === 'image/heic' || originalMimeType === 'image/heif') {
+      isHeic = true;
+    }
+
+    // If not detected by MIME type, try to detect by Sharp metadata
+    if (!isHeic) {
+      try {
+        const metadata = await sharp(inputBuffer).metadata();
+        // Sharp returns 'heif' for HEIC images
+        if (metadata.format === 'heif') {
+          isHeic = true;
+        }
+      } catch (error) {
+        // If Sharp can't read it, it might be HEIC without proper support
+        // Try HEIC conversion as a fallback
+        console.log('⚠️ Sharp cannot read image, attempting HEIC conversion...');
+        isHeic = true;
+      }
+    }
+
+    // Pre-process HEIC/HEIF files using heic-convert
+    // Sharp doesn't have built-in HEIC support on all systems
+    if (isHeic) {
+      console.log('📸 Converting HEIC to JPEG...');
+      try {
+        const jpegBuffer = await convert({
+          buffer: inputBuffer,
+          format: 'JPEG',
+          quality: 1, // Max quality for conversion (0-1)
+        });
+        processBuffer = Buffer.from(jpegBuffer);
+        console.log('✅ HEIC converted to JPEG');
+      } catch (heicError) {
+        console.error('❌ HEIC conversion failed:', heicError);
+        throw new Error('Failed to convert HEIC image. Please save as JPEG and try again.');
+      }
+    }
+
+    // Initialize sharp instance with processed buffer
+    let pipeline = sharp(processBuffer);
 
     // Get image metadata
     const metadata = await pipeline.metadata();

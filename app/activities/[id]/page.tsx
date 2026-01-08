@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/garage';
+import { formatDetailDate } from '@/lib/dateUtils';
 
 export default function ActivityDetailPage({
   params,
@@ -40,9 +41,9 @@ export default function ActivityDetailPage({
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-warm-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-warm-600">Loading...</p>
         </div>
       </main>
     );
@@ -50,9 +51,9 @@ export default function ActivityDetailPage({
 
   if (!activity) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-warm-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Activity Not Found</h1>
+          <h1 className="text-2xl font-bold text-warm-900 mb-4">Activity Not Found</h1>
           <Link href="/">
             <Button variant="primary">Back to Feed</Button>
           </Link>
@@ -60,15 +61,6 @@ export default function ActivityDetailPage({
       </main>
     );
   }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
@@ -80,7 +72,7 @@ export default function ActivityDetailPage({
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-warm-50 page-enter">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="mb-4">
           <Link href="/">
@@ -88,15 +80,15 @@ export default function ActivityDetailPage({
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-card p-6 border border-warm-200">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{activity.title}</h1>
-            <p className="text-gray-600">{formatDate(activity.activity_date)}</p>
+            <h1 className="text-3xl font-bold text-warm-900 mb-2">{activity.title}</h1>
+            <p className="text-warm-600">{formatDetailDate(activity.activity_date)}</p>
           </div>
 
           {/* Activity Image (v0.4.0) */}
           {activity.image_key && (
-            <div className="mb-6 relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden">
+            <div className="mb-6 relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden">
               <Image
                 src={getImageUrl(activity.image_key) || ''}
                 alt={activity.title}
@@ -109,16 +101,16 @@ export default function ActivityDetailPage({
 
           {/* Activity Metrics */}
           <div className="mb-6 flex flex-wrap gap-3">
-            <div className="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-lg font-medium">
+            <div className="inline-block bg-sage/20 text-sage-dark px-4 py-2 rounded-card font-medium border border-sage/30">
               ⏱️ {formatDuration(activity.duration_minutes)}
             </div>
             {activity.distance_km && (
-              <div className="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium">
+              <div className="inline-block bg-sky/20 text-sky-dark px-4 py-2 rounded-card font-medium border border-sky/30">
                 📏 {activity.distance_km} km
               </div>
             )}
             {activity.elevation_gain_m && (
-              <div className="inline-block bg-purple-100 text-purple-700 px-4 py-2 rounded-lg font-medium">
+              <div className="inline-block bg-clay/20 text-clay-dark px-4 py-2 rounded-card font-medium border border-clay/30">
                 ⛰️ {activity.elevation_gain_m} m elevation
               </div>
             )}
@@ -128,12 +120,12 @@ export default function ActivityDetailPage({
           {(activity.weather_conditions || activity.temperature_c) && (
             <div className="mb-6 flex flex-wrap gap-3">
               {activity.weather_conditions && (
-                <div className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg font-medium">
+                <div className="inline-block bg-sunshine/30 text-warm-800 px-4 py-2 rounded-card font-medium border border-sunshine/40">
                   {activity.weather_conditions}
                 </div>
               )}
               {activity.temperature_c !== null && activity.temperature_c !== undefined && (
-                <div className="inline-block bg-orange-100 text-orange-700 px-4 py-2 rounded-lg font-medium">
+                <div className="inline-block bg-sunshine/30 text-warm-800 px-4 py-2 rounded-card font-medium border border-sunshine/40">
                   🌡️ {activity.temperature_c}°C
                 </div>
               )}
@@ -143,12 +135,12 @@ export default function ActivityDetailPage({
           {/* People Tags */}
           {activity.people && activity.people.length > 0 && (
             <div className="mb-6">
-              <h2 className="text-sm font-semibold text-gray-700 mb-2">People</h2>
+              <h2 className="text-sm font-semibold text-warm-600 mb-2">People</h2>
               <div className="flex flex-wrap gap-2">
                 {activity.people.map((person) => (
                   <span
                     key={person}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-sky/20 text-sky-dark border border-sky/30"
                   >
                     {person}
                   </span>
@@ -160,12 +152,12 @@ export default function ActivityDetailPage({
           {/* General Tags */}
           {activity.tags && activity.tags.length > 0 && (
             <div className="mb-6">
-              <h2 className="text-sm font-semibold text-gray-700 mb-2">Tags</h2>
+              <h2 className="text-sm font-semibold text-warm-600 mb-2">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {activity.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-emerald-100 text-emerald-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-sage/20 text-sage-dark border border-sage/30"
                   >
                     {tag}
                   </span>
@@ -177,12 +169,12 @@ export default function ActivityDetailPage({
           {/* Notes */}
           {activity.notes && (
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Notes</h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{activity.notes}</p>
+              <h2 className="text-lg font-semibold text-warm-900 mb-2">Notes</h2>
+              <p className="text-warm-700 whitespace-pre-wrap">{activity.notes}</p>
             </div>
           )}
 
-          <div className="border-t pt-6 mt-6">
+          <div className="border-t border-warm-200 pt-6 mt-6">
             <div className="flex gap-2">
               <Link href={`/activities/${activity.id}/edit`} className="flex-1">
                 <Button variant="secondary" className="w-full">
@@ -195,7 +187,7 @@ export default function ActivityDetailPage({
             </div>
           </div>
 
-          <div className="mt-4 text-xs text-gray-500">
+          <div className="mt-4 text-xs text-warm-500">
             <p>Created: {new Date(activity.created_at).toLocaleString()}</p>
             <p>Updated: {new Date(activity.updated_at).toLocaleString()}</p>
           </div>

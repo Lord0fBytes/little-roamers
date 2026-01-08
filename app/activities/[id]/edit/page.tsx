@@ -43,9 +43,9 @@ export default function EditActivityPage({
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-warm-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-warm-600">Loading...</p>
         </div>
       </main>
     );
@@ -53,9 +53,9 @@ export default function EditActivityPage({
 
   if (!activity) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-warm-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Activity Not Found</h1>
+          <h1 className="text-2xl font-bold text-warm-900 mb-4">Activity Not Found</h1>
           <Link href="/">
             <Button variant="primary">Back to Feed</Button>
           </Link>
@@ -65,10 +65,10 @@ export default function EditActivityPage({
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-warm-50 page-enter">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Activity</h1>
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <h1 className="text-2xl font-bold text-warm-900 mb-6">Edit Activity</h1>
+        <div className="bg-white rounded-card shadow-card p-6 border border-warm-200">
           <ActivityForm
             initialData={activity}
             onSubmit={handleSubmit}

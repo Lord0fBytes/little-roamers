@@ -72,7 +72,7 @@ export default function PeopleTagInput({
 
   return (
     <div className="space-y-2">
-      {label && <label className="block text-sm font-medium">{label}</label>}
+      {label && <label className="block text-sm font-semibold text-warm-700 mb-1.5">{label}</label>}
 
       {/* People chips display */}
       {people.length > 0 && (
@@ -80,13 +80,13 @@ export default function PeopleTagInput({
           {people.map((person) => (
             <span
               key={person}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+              className="bg-sky/20 text-sky-dark border border-sky/30 px-3 py-1.5 rounded-full text-sm font-medium inline-flex items-center gap-1"
             >
               {person}
               <button
                 type="button"
                 onClick={() => removePerson(person)}
-                className="hover:text-blue-900 font-bold"
+                className="hover:text-sky font-bold"
                 aria-label={`Remove ${person}`}
               >
                 ×
@@ -106,18 +106,18 @@ export default function PeopleTagInput({
           onFocus={() => setShowSuggestions(inputValue.length > 1)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:ring-2 focus:ring-sky focus:border-sky placeholder:text-warm-400 transition-all duration-200 w-full px-4 py-2.5 focus:outline-none"
         />
 
         {/* Autocomplete suggestions dropdown */}
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-white border-2 border-sky/30 rounded-xl shadow-card max-h-48 overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"
                 onClick={() => addPerson(suggestion)}
-                className="w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                className="w-full px-4 py-2 text-left text-warm-800 hover:bg-sky/10 focus:bg-sky/15 focus:outline-none"
               >
                 {suggestion}
               </button>
@@ -126,7 +126,7 @@ export default function PeopleTagInput({
         )}
       </div>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-warm-500">
         Type names like &quot;@sarah&quot; or &quot;@kids&quot;. Press Enter to add, click × to remove
       </p>
     </div>
