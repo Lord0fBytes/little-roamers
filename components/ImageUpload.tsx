@@ -94,7 +94,7 @@ export default function ImageUpload({
 
       {/* Preview or Upload Area */}
       {previewUrl ? (
-        <div className="relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden">
+        <div className="relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden group">
           <Image
             src={previewUrl}
             alt="Activity preview"
@@ -102,18 +102,18 @@ export default function ImageUpload({
             className="object-cover"
           />
           {!disabled && (
-            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-opacity flex items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={handleClick}
-                className="px-4 py-2 bg-warm-800 text-white rounded-xl font-medium opacity-0 hover:opacity-100 transition-opacity"
+                className="px-4 py-2 bg-clay text-white rounded-xl font-semibold shadow-card opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-clay-dark transform hover:scale-105"
               >
                 Change Photo
               </button>
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="px-4 py-2 bg-red-600 text-white rounded-xl font-medium opacity-0 hover:opacity-100 transition-opacity"
+                className="px-4 py-2 bg-red-600 text-white rounded-xl font-semibold shadow-card opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-700 transform hover:scale-105"
               >
                 Remove
               </button>
@@ -167,7 +167,6 @@ export default function ImageUpload({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={handleFileInputChange}
         disabled={disabled}
         className="hidden"
