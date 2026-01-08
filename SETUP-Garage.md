@@ -31,7 +31,7 @@ Docker Compose Setup
   rpc_bind_addr = "[::]:3901"
   rpc_public_addr = "127.0.0.1:3901"
   # Generate a random secret: openssl rand -hex 32
-  rpc_secret = "1799bccfd7411afa8a3c1c4a54e6e6f85f0e5d8fc1f9f6f6e8b7c5e5f6e8f9a0"
+  rpc_secret = "REPLACE_WITH_OUTPUT_FROM: openssl rand -hex 32"
 
   [s3_api]
   s3_region = "garage"
@@ -111,7 +111,7 @@ Docker Compose Setup
   docker compose restart
 
   # Check if port 3900 is accessible
-  curl http://10.0.0.18:3900
+  curl http://YOUR_SERVER_IP:3900
   # Should return an XML error (that's expected - means S3 API is working)
 
   Let me know when you have the credentials ready! 🚀

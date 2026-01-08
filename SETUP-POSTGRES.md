@@ -51,7 +51,7 @@ You have two options for running the schema:
 
 ```bash
 # Navigate to the project directory
-cd /Users/justin/Documents/Coding/little-roamers
+cd /path/to/little-roamers
 
 # Run the schema file
 psql -U postgres -h localhost -d little_roamers -f schema.sql
@@ -83,7 +83,6 @@ You should get an empty result set (no errors).
 
 1. In the project root, copy the example file:
    ```bash
-   cd /Users/justin/Documents/Coding/little-roamers
    cp .env.local.example .env.local
    ```
 
