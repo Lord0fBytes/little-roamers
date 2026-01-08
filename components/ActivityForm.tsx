@@ -146,7 +146,7 @@ export default function ActivityForm({
             value={formData.activity_date}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
+            className="w-full max-w-full px-4 py-2.5 bg-warm-50 border-2 border-warm-200 text-warm-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-200"
           />
         </div>
 
