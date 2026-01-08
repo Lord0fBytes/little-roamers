@@ -38,14 +38,25 @@ export default function ImageUpload({
       return;
     }
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    // Check if HEIC/HEIF (browsers can't preview these natively)
+    const isHeic = file.type === 'image/heic' ||
+                   file.type === 'image/heif' ||
+                   file.name.toLowerCase().endsWith('.heic') ||
+                   file.name.toLowerCase().endsWith('.heif');
 
-    onImageSelect(file);
+    if (isHeic) {
+      // Show placeholder for HEIC files (will be converted server-side)
+      setPreviewUrl('heic-placeholder');
+      onImageSelect(file);
+    } else {
+      // Create preview for browser-supported formats
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      onImageSelect(file);
+    }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,12 +106,36 @@ export default function ImageUpload({
       {/* Preview or Upload Area */}
       {previewUrl ? (
         <div className="relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden group">
-          <Image
-            src={previewUrl}
-            alt="Activity preview"
-            fill
-            className="object-cover"
-          />
+          {previewUrl === 'heic-placeholder' ? (
+            // HEIC placeholder (browser can't preview HEIC natively)
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-sage/20 to-sky/20">
+              <svg
+                className="w-16 h-16 text-sage"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <div className="text-center">
+                <p className="text-sage-dark font-semibold">HEIC Image Selected</p>
+                <p className="text-sm text-warm-600">Preview will be available after upload</p>
+              </div>
+            </div>
+          ) : (
+            // Normal image preview
+            <Image
+              src={previewUrl}
+              alt="Activity preview"
+              fill
+              className="object-cover"
+            />
+          )}
           {!disabled && (
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center gap-3">
               <button
