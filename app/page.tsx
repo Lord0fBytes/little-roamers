@@ -1,15 +1,44 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useActivities } from '@/contexts/ActivitiesContext';
 import ActivityCard from '@/components/ActivityCard';
 import ActivityCardSkeleton from '@/components/ActivityCardSkeleton';
+import SearchBar from '@/components/FilterBar';
 import Link from 'next/link';
 import Button from '@/components/Button';
 
 export default function Home() {
-  const { activities, loading, error, refreshActivities } = useActivities();
+  const {
+    activities,
+    filteredActivities,
+    loading,
+    error,
+    searchQuery,
+    setSearchQuery,
+    clearSearch,
+    refreshActivities,
+  } = useActivities();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // v0.6.0 Read search from URL on mount and when URL changes
+  useEffect(() => {
+    const searchParam = searchParams.get('search') || '';
+    setSearchQuery(searchParam);
+  }, [searchParams, setSearchQuery]); // Re-run when URL search params change
+
+  // v0.6.0 Update URL when search changes
+  useEffect(() => {
+    const newUrl = searchQuery ? `/?search=${encodeURIComponent(searchQuery)}` : '/';
+
+    // Only update URL if it's different (avoid unnecessary navigation)
+    if (window.location.pathname + window.location.search !== newUrl) {
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [searchQuery, router]);
 
   // Pull-to-refresh handler
   const handleRefresh = useCallback(async () => {
@@ -46,23 +75,23 @@ export default function Home() {
           <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
         </div>
 
-        {/* Action Bar */}
-        <div className="mb-8 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <Link href="/activities/new" className="flex-shrink-0">
-            <Button variant="primary" className="w-full sm:w-auto">
-              + Log Activity
-            </Button>
-          </Link>
-
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing || loading}
-            className="text-sm text-warm-600 hover:text-sage transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            <span className={isRefreshing ? 'animate-spin' : ''}>🔄</span>
-            {isRefreshing ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </div>
+        {/* SearchBar with Add Button - v0.6.0 */}
+        {activities.length > 0 && (
+          <div className="flex gap-3 mb-6 items-stretch">
+            <div className="flex-1">
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onClearSearch={clearSearch}
+              />
+            </div>
+            <Link href="/activities/new" className="flex-shrink-0 flex">
+              <button className="bg-clay hover:bg-clay-dark text-white rounded-card shadow-card border border-warm-200 px-6 font-bold text-2xl transition-colors flex items-center justify-center aspect-square">
+                +
+              </button>
+            </Link>
+          </div>
+        )}
 
         {/* Loading State - Show Skeletons */}
         {loading && activities.length === 0 ? (
@@ -72,7 +101,7 @@ export default function Home() {
             ))}
           </div>
         ) : activities.length === 0 ? (
-          /* Empty State */
+          /* Empty State - No Activities */
           <div className="bg-white rounded-card shadow-card p-12 md:p-16 text-center border border-warm-200">
             <div className="text-7xl mb-6">🌲</div>
             <h2 className="text-2xl font-bold text-warm-900 mb-3">No Activities Yet</h2>
@@ -85,10 +114,22 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        ) : filteredActivities.length === 0 ? (
+          /* Empty State - No Matches for Search */
+          <div className="bg-white rounded-card shadow-card p-12 md:p-16 text-center border border-warm-200">
+            <div className="text-7xl mb-6">🔍</div>
+            <h2 className="text-2xl font-bold text-warm-900 mb-3">No Activities Found</h2>
+            <p className="text-warm-600 mb-8 max-w-md mx-auto">
+              No activities match your search for "<strong>{searchQuery}</strong>". Try a different search term or clear the search to see all activities.
+            </p>
+            <Button onClick={clearSearch} variant="secondary" className="text-lg px-8 py-3">
+              Clear Search
+            </Button>
+          </div>
         ) : (
           /* Activities Feed - Responsive Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activities.map(activity => (
+            {filteredActivities.map(activity => (
               <ActivityCard key={activity.id} activity={activity} />
             ))}
           </div>
@@ -97,7 +138,8 @@ export default function Home() {
         {/* Footer Stats */}
         {activities.length > 0 && (
           <div className="mt-12 text-center text-sm text-warm-500">
-            {activities.length} {activities.length === 1 ? 'activity' : 'activities'} logged
+            Showing {filteredActivities.length} of {activities.length}{' '}
+            {activities.length === 1 ? 'activity' : 'activities'}
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import React from 'react';
 import { Activity } from '@/types/activity';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { getImageUrl } from '@/lib/garage';
 import { formatActivityDate } from '@/lib/dateUtils';
 
@@ -12,6 +13,8 @@ interface ActivityCardProps {
 }
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
+  const router = useRouter();
+
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
       return `${minutes}m`;
@@ -19,6 +22,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+  };
+
+  // Handle tag click - navigate to search
+  const handleTagClick = (e: React.MouseEvent, tag: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/?search=${encodeURIComponent(tag)}`);
   };
 
   const getWeatherEmoji = (weatherConditions?: string): string => {
@@ -93,12 +103,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             {activity.tags && activity.tags.length > 0 ? (
               <div className="flex flex-wrap gap-1.5">
                 {activity.tags.slice(0, 3).map((tag) => (
-                  <span
+                  <button
                     key={tag}
-                    className="inline-flex items-center bg-sage/20 text-sage-dark px-2.5 py-1 rounded-full text-xs font-medium border border-sage/30"
+                    onClick={(e) => handleTagClick(e, tag)}
+                    className="inline-flex items-center bg-sage/20 text-sage-dark px-2.5 py-1 rounded-full text-xs font-medium border border-sage/30 cursor-pointer hover:bg-sage/30 transition-colors"
                   >
                     {tag}
-                  </span>
+                  </button>
                 ))}
                 {activity.tags.length > 3 && (
                   <span className="inline-flex items-center bg-warm-200 text-warm-700 px-2.5 py-1 rounded-full text-xs font-medium">
