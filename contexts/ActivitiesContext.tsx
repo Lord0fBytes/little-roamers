@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { Activity, CreateActivityInput, UpdateActivityInput, AutocompleteData } from '@/types/activity';
 
 interface ActivitiesContextType {
@@ -10,6 +10,9 @@ interface ActivitiesContextType {
   // v0.3.0 autocomplete data
   peopleSuggestions: string[];
   tagSuggestions: string[];
+  // v0.6.0 search
+  searchQuery: string;
+  filteredActivities: Activity[];
   // Methods
   getActivity: (id: string) => Promise<Activity | null>;
   createActivity: (input: CreateActivityInput) => Promise<Activity | null>;
@@ -17,6 +20,9 @@ interface ActivitiesContextType {
   deleteActivity: (id: string) => Promise<boolean>;
   refreshActivities: () => Promise<void>;
   refreshAutocomplete: () => Promise<void>;
+  // v0.6.0 search methods
+  setSearchQuery: (query: string) => void;
+  clearSearch: () => void;
 }
 
 const ActivitiesContext = createContext<ActivitiesContextType | undefined>(undefined);
@@ -27,6 +33,38 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [peopleSuggestions, setPeopleSuggestions] = useState<string[]>([]);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
+
+  // v0.6.0 Search state
+  const [searchQuery, setSearchQueryState] = useState<string>('');
+
+  // v0.6.0 Compute filtered activities (memoized for performance)
+  const filteredActivities = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return activities;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+
+    return activities.filter(activity => {
+      // Search in title
+      if (activity.title.toLowerCase().includes(query)) return true;
+
+      // Search in notes
+      if (activity.notes && activity.notes.toLowerCase().includes(query)) return true;
+
+      // Search in people tags
+      if (activity.people && activity.people.some(person => person.toLowerCase().includes(query))) {
+        return true;
+      }
+
+      // Search in general tags
+      if (activity.tags && activity.tags.some(tag => tag.toLowerCase().includes(query))) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [activities, searchQuery]);
 
   // Load activities and autocomplete data on mount
   useEffect(() => {
@@ -186,6 +224,15 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // v0.6.0 Search methods
+  const setSearchQuery = (query: string): void => {
+    setSearchQueryState(query);
+  };
+
+  const clearSearch = (): void => {
+    setSearchQueryState('');
+  };
+
   return (
     <ActivitiesContext.Provider
       value={{
@@ -194,12 +241,16 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
         error,
         peopleSuggestions,
         tagSuggestions,
+        searchQuery,
+        filteredActivities,
         getActivity,
         createActivity,
         updateActivity,
         deleteActivity,
         refreshActivities,
         refreshAutocomplete,
+        setSearchQuery,
+        clearSearch,
       }}
     >
       {children}
