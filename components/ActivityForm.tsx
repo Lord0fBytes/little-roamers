@@ -25,7 +25,8 @@ export default function ActivityForm({
   peopleSuggestions = [],
   tagSuggestions = [],
 }: ActivityFormProps) {
-  const [showFullEntry, setShowFullEntry] = useState(false);
+  // v0.7.2 - Auto-expand additional details when editing
+  const [showFullEntry, setShowFullEntry] = useState(!!initialData);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<CreateActivityInput>({
