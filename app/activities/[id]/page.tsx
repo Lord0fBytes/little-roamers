@@ -20,6 +20,7 @@ export default function ActivityDetailPage({
   const { getActivity, deleteActivity } = useActivities();
   const [activity, setActivity] = useState<Activity | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -32,9 +33,19 @@ export default function ActivityDetailPage({
 
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this activity?')) {
-      const success = await deleteActivity(id);
-      if (success) {
-        router.push('/');
+      setIsDeleting(true);
+      try {
+        const success = await deleteActivity(id);
+        if (success) {
+          router.push('/');
+        } else {
+          alert('Failed to delete activity. Please try again.');
+          setIsDeleting(false);
+        }
+      } catch (error) {
+        console.error('Error deleting activity:', error);
+        alert('An error occurred while deleting the activity.');
+        setIsDeleting(false);
       }
     }
   };
@@ -181,8 +192,13 @@ export default function ActivityDetailPage({
                   Edit Activity
                 </Button>
               </Link>
-              <Button variant="danger" onClick={handleDelete} className="flex-1">
-                Delete Activity
+              <Button
+                variant="danger"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Activity'}
               </Button>
             </div>
           </div>

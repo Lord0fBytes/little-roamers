@@ -120,7 +120,7 @@ export default function Home() {
             <div className="text-7xl mb-6">🔍</div>
             <h2 className="text-2xl font-bold text-warm-900 mb-3">No Activities Found</h2>
             <p className="text-warm-600 mb-8 max-w-md mx-auto">
-              No activities match your search for "<strong>{searchQuery}</strong>". Try a different search term or clear the search to see all activities.
+              No activities match your search for &ldquo;<strong>{searchQuery}</strong>&rdquo;. Try a different search term or clear the search to see all activities.
             </p>
             <Button onClick={clearSearch} variant="secondary" className="text-lg px-8 py-3">
               Clear Search
