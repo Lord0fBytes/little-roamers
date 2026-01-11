@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useActivities } from '@/contexts/ActivitiesContext';
 import ActivityCard from '@/components/ActivityCard';
 import ActivityCardSkeleton from '@/components/ActivityCardSkeleton';
 import SearchBar from '@/components/FilterBar';
+import NavigationBar from '@/components/NavigationBar';
 import Link from 'next/link';
 import Button from '@/components/Button';
 
-export default function Home() {
+function HomeContent() {
   const {
     activities,
     filteredActivities,
@@ -21,8 +22,26 @@ export default function Home() {
     refreshActivities,
   } = useActivities();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hoursThisYear, setHoursThisYear] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // v0.7.0 Fetch hours this year for header display
+  useEffect(() => {
+    const fetchHoursThisYear = async () => {
+      try {
+        const response = await fetch('/api/activities/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setHoursThisYear(data.stats.hoursThisYear);
+        }
+      } catch (err) {
+        console.error('Error fetching hours this year:', err);
+      }
+    };
+
+    fetchHoursThisYear();
+  }, [activities]); // Re-fetch when activities change
 
   // v0.6.0 Read search from URL on mount and when URL changes
   useEffect(() => {
@@ -73,23 +92,24 @@ export default function Home() {
         <div className="bg-gradient-to-br from-cream via-warm-50 to-sand py-12 mb-8 -mx-4 px-4">
           <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
           <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
+          {hoursThisYear !== null && hoursThisYear > 0 && (
+            <p className="text-sage-dark font-semibold text-lg mt-2">
+              🌳 {hoursThisYear} hours outside this year
+            </p>
+          )}
         </div>
 
-        {/* SearchBar with Add Button - v0.6.0 */}
+        {/* Navigation Bar - v0.7.0 */}
+        <NavigationBar />
+
+        {/* SearchBar - v0.6.0 */}
         {activities.length > 0 && (
-          <div className="flex gap-3 mb-6 items-stretch">
-            <div className="flex-1">
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onClearSearch={clearSearch}
-              />
-            </div>
-            <Link href="/activities/new" className="flex-shrink-0 flex">
-              <button className="bg-clay hover:bg-clay-dark text-white rounded-card shadow-card border border-warm-200 px-6 font-bold text-2xl transition-colors flex items-center justify-center aspect-square">
-                +
-              </button>
-            </Link>
+          <div className="mb-6">
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onClearSearch={clearSearch}
+            />
           </div>
         )}
 
@@ -143,6 +163,28 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Floating Add Button - v0.7.0 */}
+      <Link href="/activities/new">
+        <button
+          className="fixed bottom-6 right-6 w-16 h-16 bg-clay hover:bg-clay-dark text-white rounded-full shadow-hover hover:shadow-card transition-all duration-300 flex items-center justify-center text-3xl font-bold z-50 btn-interactive"
+          aria-label="Add new activity"
+        >
+          +
+        </button>
+      </Link>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-warm-50 flex items-center justify-center">
+        <p className="text-warm-600">Loading...</p>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
