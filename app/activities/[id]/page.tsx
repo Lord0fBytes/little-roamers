@@ -101,17 +101,17 @@ export default function ActivityDetailPage({
 
           {/* Activity Metrics */}
           <div className="mb-6 flex flex-wrap gap-3">
-            <div className="inline-block bg-sage/20 text-sage-dark px-4 py-2 rounded-card font-medium border border-sage/30">
+            <div className="inline-block bg-gradient-to-br from-sage-light to-sage text-white px-4 py-2 rounded-full font-semibold shadow-soft">
               ⏱️ {formatDuration(activity.duration_minutes)}
             </div>
             {activity.distance_km && (
-              <div className="inline-block bg-sky/20 text-sky-dark px-4 py-2 rounded-card font-medium border border-sky/30">
+              <div className="inline-block bg-sky-dark text-white border border-sky-dark px-4 py-2 rounded-full font-semibold shadow-soft">
                 📏 {activity.distance_km} km
               </div>
             )}
             {activity.elevation_gain_m && (
-              <div className="inline-block bg-clay/20 text-clay-dark px-4 py-2 rounded-card font-medium border border-clay/30">
-                ⛰️ {activity.elevation_gain_m} m elevation
+              <div className="inline-block bg-clay-dark text-white border border-clay-dark px-4 py-2 rounded-full font-semibold shadow-soft">
+                ⛰️ {activity.elevation_gain_m} m
               </div>
             )}
           </div>
@@ -120,12 +120,12 @@ export default function ActivityDetailPage({
           {(activity.weather_conditions || activity.temperature_c) && (
             <div className="mb-6 flex flex-wrap gap-3">
               {activity.weather_conditions && (
-                <div className="inline-block bg-sunshine/30 text-warm-800 px-4 py-2 rounded-card font-medium border border-sunshine/40">
+                <div className="inline-block bg-sunshine text-warm-900 px-4 py-2 rounded-full font-semibold shadow-soft border border-sunshine">
                   {activity.weather_conditions}
                 </div>
               )}
               {activity.temperature_c !== null && activity.temperature_c !== undefined && (
-                <div className="inline-block bg-sunshine/30 text-warm-800 px-4 py-2 rounded-card font-medium border border-sunshine/40">
+                <div className="inline-block bg-sunshine text-warm-900 px-4 py-2 rounded-full font-semibold shadow-soft border border-sunshine">
                   🌡️ {activity.temperature_c}°C
                 </div>
               )}
