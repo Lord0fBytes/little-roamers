@@ -102,21 +102,14 @@ function HomeContent() {
         {/* Navigation Bar - v0.7.0 */}
         <NavigationBar />
 
-        {/* SearchBar with Add Button - v0.6.0 */}
+        {/* SearchBar - v0.6.0 */}
         {activities.length > 0 && (
-          <div className="flex gap-3 mb-6 items-stretch">
-            <div className="flex-1">
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onClearSearch={clearSearch}
-              />
-            </div>
-            <Link href="/activities/new" className="flex-shrink-0 flex">
-              <button className="bg-clay hover:bg-clay-dark text-white rounded-card shadow-card border border-warm-200 px-6 font-bold text-2xl transition-colors flex items-center justify-center aspect-square">
-                +
-              </button>
-            </Link>
+          <div className="mb-6">
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onClearSearch={clearSearch}
+            />
           </div>
         )}
 
@@ -170,6 +163,16 @@ function HomeContent() {
           </div>
         )}
       </div>
+
+      {/* Floating Add Button - v0.7.0 */}
+      <Link href="/activities/new">
+        <button
+          className="fixed bottom-6 right-6 w-16 h-16 bg-clay hover:bg-clay-dark text-white rounded-full shadow-hover hover:shadow-card transition-all duration-300 flex items-center justify-center text-3xl font-bold z-50 btn-interactive"
+          aria-label="Add new activity"
+        >
+          +
+        </button>
+      </Link>
     </main>
   );
 }
