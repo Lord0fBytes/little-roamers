@@ -103,21 +103,7 @@ export default function ActivityForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Quick Entry / Full Entry Toggle */}
-      <div className="flex justify-between items-center pb-2 border-b border-warm-200">
-        <h3 className="text-lg font-medium text-warm-900">
-          {showFullEntry ? 'Full Entry Mode' : 'Quick Entry Mode'}
-        </h3>
-        <button
-          type="button"
-          onClick={() => setShowFullEntry(!showFullEntry)}
-          className="text-sm text-sage-dark hover:text-sage font-medium transition-colors"
-        >
-          {showFullEntry ? '← Switch to Quick Entry' : 'Add More Details →'}
-        </button>
-      </div>
-
-      {/* QUICK ENTRY FIELDS (always visible) */}
+      {/* BASIC FIELDS (always visible) */}
       <div>
         <label htmlFor="title" className="block text-sm font-semibold text-warm-700 mb-1.5">
           Title *
@@ -190,10 +176,25 @@ export default function ActivityForm({
         disabled={isUploading}
       />
 
-      {/* FULL ENTRY FIELDS (shown when expanded) */}
+      {/* Additional Details Toggle Button */}
+      <button
+        type="button"
+        onClick={() => setShowFullEntry(!showFullEntry)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-warm-50 hover:bg-warm-100 border-2 border-warm-200 rounded-xl transition-all duration-200 text-warm-800 font-medium"
+      >
+        <span>Additional Details</span>
+        <span
+          className={`transition-transform duration-300 ${
+            showFullEntry ? 'rotate-180' : 'rotate-0'
+          }`}
+        >
+          🔽
+        </span>
+      </button>
+
+      {/* ADDITIONAL DETAILS FIELDS (shown when expanded) */}
       {showFullEntry && (
-        <div className="space-y-4 pt-4 border-t border-warm-200">
-          <h4 className="font-medium text-warm-900">Additional Details</h4>
+        <div className="space-y-4 pt-2 animate-fadeIn">
 
           {/* Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
