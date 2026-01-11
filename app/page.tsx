@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useActivities } from '@/contexts/ActivitiesContext';
 import ActivityCard from '@/components/ActivityCard';
@@ -9,7 +9,7 @@ import SearchBar from '@/components/FilterBar';
 import Link from 'next/link';
 import Button from '@/components/Button';
 
-export default function Home() {
+function HomeContent() {
   const {
     activities,
     filteredActivities,
@@ -21,8 +21,26 @@ export default function Home() {
     refreshActivities,
   } = useActivities();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hoursThisYear, setHoursThisYear] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // v0.7.0 Fetch hours this year for header display
+  useEffect(() => {
+    const fetchHoursThisYear = async () => {
+      try {
+        const response = await fetch('/api/activities/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setHoursThisYear(data.stats.hoursThisYear);
+        }
+      } catch (err) {
+        console.error('Error fetching hours this year:', err);
+      }
+    };
+
+    fetchHoursThisYear();
+  }, [activities]); // Re-fetch when activities change
 
   // v0.6.0 Read search from URL on mount and when URL changes
   useEffect(() => {
@@ -71,8 +89,22 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="bg-gradient-to-br from-cream via-warm-50 to-sand py-12 mb-8 -mx-4 px-4">
-          <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
-          <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
+              <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
+              {hoursThisYear !== null && hoursThisYear > 0 && (
+                <p className="text-sage-dark font-semibold text-lg mt-2">
+                  🌳 {hoursThisYear} hours outside this year
+                </p>
+              )}
+            </div>
+            <Link href="/dashboard">
+              <Button variant="secondary" className="flex items-center gap-2">
+                📊 Dashboard
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* SearchBar with Add Button - v0.6.0 */}
@@ -144,5 +176,17 @@ export default function Home() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-warm-50 flex items-center justify-center">
+        <p className="text-warm-600">Loading...</p>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
