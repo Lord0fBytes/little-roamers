@@ -6,6 +6,7 @@ import { useActivities } from '@/contexts/ActivitiesContext';
 import ActivityCard from '@/components/ActivityCard';
 import ActivityCardSkeleton from '@/components/ActivityCardSkeleton';
 import SearchBar from '@/components/FilterBar';
+import NavigationBar from '@/components/NavigationBar';
 import Link from 'next/link';
 import Button from '@/components/Button';
 
@@ -89,23 +90,17 @@ function HomeContent() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="bg-gradient-to-br from-cream via-warm-50 to-sand py-12 mb-8 -mx-4 px-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
-              <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
-              {hoursThisYear !== null && hoursThisYear > 0 && (
-                <p className="text-sage-dark font-semibold text-lg mt-2">
-                  🌳 {hoursThisYear} hours outside this year
-                </p>
-              )}
-            </div>
-            <Link href="/dashboard">
-              <Button variant="secondary" className="flex items-center gap-2">
-                📊 Dashboard
-              </Button>
-            </Link>
-          </div>
+          <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
+          <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
+          {hoursThisYear !== null && hoursThisYear > 0 && (
+            <p className="text-sage-dark font-semibold text-lg mt-2">
+              🌳 {hoursThisYear} hours outside this year
+            </p>
+          )}
         </div>
+
+        {/* Navigation Bar - v0.7.0 */}
+        <NavigationBar />
 
         {/* SearchBar with Add Button - v0.6.0 */}
         {activities.length > 0 && (
