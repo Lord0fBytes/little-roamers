@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/garage';
 import { formatDetailDate } from '@/lib/dateUtils';
+import ImageModal from '@/components/ImageModal';
 
 export default function ActivityDetailPage({
   params,
@@ -21,6 +22,7 @@ export default function ActivityDetailPage({
   const [activity, setActivity] = useState<Activity | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -97,16 +99,24 @@ export default function ActivityDetailPage({
             <p className="text-warm-600">{formatDetailDate(activity.activity_date)}</p>
           </div>
 
-          {/* Activity Image (v0.4.0) */}
+          {/* Activity Image - v0.7.3 clickable for full-size view */}
           {activity.image_key && (
-            <div className="mb-6 relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden">
+            <div
+              className="mb-6 relative w-full aspect-video bg-warm-100 rounded-card overflow-hidden cursor-pointer group"
+              onClick={() => setShowImageModal(true)}
+            >
               <Image
                 src={getImageUrl(activity.image_key) || ''}
                 alt={activity.title}
                 fill
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
                 sizes="(max-width: 768px) 100vw, 768px"
               />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <span className="text-white text-5xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  🔍
+                </span>
+              </div>
             </div>
           )}
 
@@ -209,6 +219,15 @@ export default function ActivityDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Image Modal - v0.7.3 */}
+      {showImageModal && activity.image_key && (
+        <ImageModal
+          imageUrl={getImageUrl(activity.image_key) || ''}
+          alt={activity.title}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
     </main>
   );
 }

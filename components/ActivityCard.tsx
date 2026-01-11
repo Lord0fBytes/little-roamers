@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Activity } from '@/types/activity';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getImageUrl } from '@/lib/garage';
 import { formatActivityDate } from '@/lib/dateUtils';
+import ImageModal from './ImageModal';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -14,6 +15,7 @@ interface ActivityCardProps {
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
   const router = useRouter();
+  const [showImageModal, setShowImageModal] = useState(false);
 
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
@@ -49,20 +51,33 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   };
 
   return (
-    <Link href={`/activities/${activity.id}`}>
-      <div className="bg-white rounded-card shadow-card hover:shadow-hover transition-all duration-300 border border-warm-200 hover-lift activity-card overflow-hidden cursor-pointer">
-        {/* Activity Image - unchanged */}
-        {activity.image_key && (
-          <div className="relative w-full aspect-video bg-warm-100">
-            <Image
-              src={getImageUrl(activity.image_key) || ''}
-              alt={activity.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </div>
-        )}
+    <>
+      <Link href={`/activities/${activity.id}`}>
+        <div className="bg-white rounded-card shadow-card hover:shadow-hover transition-all duration-300 border border-warm-200 hover-lift activity-card overflow-hidden cursor-pointer">
+          {/* Activity Image - v0.7.3 clickable for full-size view */}
+          {activity.image_key && (
+            <div
+              className="relative w-full aspect-video bg-warm-100 group"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowImageModal(true);
+              }}
+            >
+              <Image
+                src={getImageUrl(activity.image_key) || ''}
+                alt={activity.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <span className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  🔍
+                </span>
+              </div>
+            </div>
+          )}
 
         <div className="p-4">
           {/* Header: Title and Badges */}
@@ -129,5 +144,15 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
         </div>
       </div>
     </Link>
+
+      {/* Image Modal - v0.7.3 */}
+      {showImageModal && activity.image_key && (
+        <ImageModal
+          imageUrl={getImageUrl(activity.image_key) || ''}
+          alt={activity.title}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
+    </>
   );
 }
