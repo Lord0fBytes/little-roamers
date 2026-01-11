@@ -60,14 +60,19 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-warm-50 page-enter">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="bg-gradient-to-br from-cream via-warm-50 to-sand py-12 mb-8 -mx-4 px-4">
-          <h1 className="text-4xl font-bold text-warm-900 mb-2">Little Roamers</h1>
-          <p className="text-warm-600 text-lg">Growing Up Outdoors</p>
+        {/* Header - v0.7.4 modernized */}
+        <div className="bg-gradient-to-b from-[#FBF7F0] via-[#F4EAD5] to-[#E8F4E8] pt-16 pb-10 mb-8 -mx-4 px-4 text-center sm:text-left shadow-[0_8px_16px_-4px_rgba(0,0,0,0.06)] relative">
+          <h1 className="text-5xl font-extrabold text-warm-900 mb-3 tracking-tight">
+            Little Roamers
+          </h1>
+          <p className="text-warm-600/70 text-base mb-4">Growing Up Outdoors</p>
           {stats.hoursThisYear !== null && stats.hoursThisYear > 0 && (
-            <p className="text-sage-dark font-semibold text-lg mt-2">
-              🌳 {stats.hoursThisYear} hours outside this year
-            </p>
+            <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-sage/30 shadow-sm">
+              <span className="text-sm text-warm-800">
+                <span className="text-xl font-bold text-sage-dark">{stats.hoursThisYear}</span>
+                <span className="text-xl font-bold text-warm-800"> / 1026</span> hrs Outside
+              </span>
+            </div>
           )}
         </div>
 

@@ -15,14 +15,14 @@ export default function NavigationBar() {
   };
 
   return (
-    <nav className="bg-white rounded-card shadow-card border border-warm-200 p-2 mb-6">
-      <div className="flex gap-2">
+    <nav className="bg-white rounded-card shadow-card border border-warm-200 p-1.5 mb-6">
+      <div className="flex gap-1.5">
         <Link href="/" className="flex-1">
           <button
-            className={`w-full px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+            className={`w-full px-4 py-2 rounded-xl font-semibold transition-all duration-200 ${
               isActive('/')
-                ? 'bg-sage text-white shadow-soft'
-                : 'bg-transparent text-warm-700 hover:bg-warm-100'
+                ? 'bg-sage text-white shadow-[0_4px_10px_rgba(0,0,0,0.08)]'
+                : 'bg-transparent text-warm-700 opacity-70 hover:opacity-100 hover:bg-warm-50'
             }`}
           >
             🏠 Feed
@@ -30,10 +30,10 @@ export default function NavigationBar() {
         </Link>
         <Link href="/dashboard" className="flex-1">
           <button
-            className={`w-full px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+            className={`w-full px-4 py-2 rounded-xl font-semibold transition-all duration-200 ${
               isActive('/dashboard')
-                ? 'bg-sage text-white shadow-soft'
-                : 'bg-transparent text-warm-700 hover:bg-warm-100'
+                ? 'bg-sage text-white shadow-[0_4px_10px_rgba(0,0,0,0.08)]'
+                : 'bg-transparent text-warm-700 opacity-70 hover:opacity-100 hover:bg-warm-50'
             }`}
           >
             📊 Dashboard
