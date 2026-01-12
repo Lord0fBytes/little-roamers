@@ -69,7 +69,7 @@ chmod +x scripts/init-garage.sh
 # Copy credentials from output to .env.docker
 
 # 3. Start stack
-docker compose up -d
+docker compose --env-file .env.docker up -d
 
 # 4. Verify health
 docker compose ps
@@ -78,6 +78,8 @@ docker compose ps
 # 5. Access application
 open http://localhost:3000
 ```
+
+**Note**: The `--env-file .env.docker` flag tells Docker Compose to read environment variables from `.env.docker` instead of the default `.env` file.
 
 ---
 
@@ -345,15 +347,15 @@ docker compose exec app ./run-migrations.sh
 Start all services in detached mode:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env.docker up -d
 ```
 
 Start specific service:
 
 ```bash
-docker compose up -d postgres
-docker compose up -d garage
-docker compose up -d app
+docker compose --env-file .env.docker up -d postgres
+docker compose --env-file .env.docker up -d garage
+docker compose --env-file .env.docker up -d app
 ```
 
 ### Stopping Services

@@ -36,12 +36,14 @@ cp .env.docker.example .env.docker
 # Copy credentials to .env.docker
 
 # 3. Start the stack
-docker compose up -d
+docker compose --env-file .env.docker up -d
 
 # 4. Verify health
 docker compose ps
 ./scripts/health-check.sh
 ```
+
+> **Note**: The `--env-file .env.docker` flag is required to load environment variables from `.env.docker`.
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
