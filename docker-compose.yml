@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: little-roamers-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-little_roamers}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - little-roamers-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d little_roamers"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  garage:
+    image: dxflrs/garage:v1.0.1
+    container_name: little-roamers-garage
+    restart: unless-stopped
+    environment:
+      RUST_LOG: garage=info
+    volumes:
+      - garage-data:/var/lib/garage/data
+      - garage-meta:/var/lib/garage/meta
+      - ./garage.toml:/etc/garage.toml:ro
+    ports:
+      - "3900:3900"
+      - "3902:3902"
+    networks:
+      - little-roamers-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3900 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: little-roamers-app
+    restart: unless-stopped
+    environment:
+      # Database connection
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-little_roamers}
+      POSTGRES_DB: ${POSTGRES_DB:-little_roamers}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Garage S3 storage
+      GARAGE_ENDPOINT: http://garage:3900
+      GARAGE_REGION: ${GARAGE_REGION:-garage}
+      GARAGE_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID}
+      GARAGE_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY}
+      GARAGE_BUCKET: ${GARAGE_BUCKET:-little-roamers}
+      # Environment
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    networks:
+      - little-roamers-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      garage:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/activities || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres-data:
+    name: little-roamers-postgres-data
+  garage-data:
+    name: little-roamers-garage-data
+  garage-meta:
+    name: little-roamers-garage-meta
+
+networks:
+  little-roamers-network:
+    name: little-roamers-network
+    driver: bridge
