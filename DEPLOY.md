@@ -281,8 +281,8 @@ You should see the Little Roamers feed page (empty state initially).
 Generated automatically by `scripts/init-garage.sh`. Key settings:
 
 ```toml
-metadata_dir = "/var/lib/garage/meta"  # Garage metadata storage
-data_dir = "/var/lib/garage/data"      # Garage object storage
+metadata_dir = "/var/lib//garage/meta"  # Garage metadata storage
+data_dir = "/var/lib//garage/data"      # Garage object storage
 replication_factor = 1                  # Single-node deployment
 
 [s3_api]
@@ -306,7 +306,7 @@ api_bind_addr = "0.0.0.0:3903"         # Admin API port
 
 #### Garage Service
 
-- **Image**: `dxflrs/garage:v1.0.1`
+- **Image**: `dxflrs//garage:v1.0.1`
 - **Ports**: 3900 (S3 API), 3902 (Web UI)
 - **Volumes**: `little-roamers-garage-data`, `little-roamers-garage-meta`
 
@@ -528,11 +528,11 @@ docker run --rm -v little-roamers-postgres-data:/data -v $(pwd)/backups:/backup 
 
 # Garage data
 docker volume create little-roamers-garage-data
-docker run --rm -v little-roamers-garage-data:/data -v $(pwd)/backups:/backup alpine tar xzf /backup/garage-data-<timestamp>.tar.gz -C /
+docker run --rm -v little-roamers-garage-data:/data -v $(pwd)/backups:/backup alpine tar xzf /backup//garage-data-<timestamp>.tar.gz -C /
 
 # Garage metadata
 docker volume create little-roamers-garage-meta
-docker run --rm -v little-roamers-garage-meta:/data -v $(pwd)/backups:/backup alpine tar xzf /backup/garage-meta-<timestamp>.tar.gz -C /
+docker run --rm -v little-roamers-garage-meta:/data -v $(pwd)/backups:/backup alpine tar xzf /backup//garage-meta-<timestamp>.tar.gz -C /
 ```
 
 3. Start services:
@@ -703,7 +703,7 @@ secrets:
   postgres_password:
     file: ./secrets/postgres_password.txt
   garage_secret:
-    file: ./secrets/garage_secret.txt
+    file: ./secrets//garage_secret.txt
 
 services:
   postgres:
@@ -785,20 +785,20 @@ Garage provides an admin API on port 3903 (internal only).
 To use garage CLI:
 
 ```bash
-docker exec -it little-roamers-garage garage <command>
+docker exec -it little-roamers-garage //garage <command>
 ```
 
 Common commands:
 
 ```bash
 # List buckets
-docker exec little-roamers-garage garage bucket list
+docker exec little-roamers-garage //garage bucket list
 
 # List keys
-docker exec little-roamers-garage garage key list
+docker exec little-roamers-garage //garage key list
 
 # Node status
-docker exec little-roamers-garage garage node id
+docker exec little-roamers-garage //garage node id
 ```
 
 ---
