@@ -61,7 +61,7 @@ This deployment guide helps you run Little Roamers as a fully containerized stac
 ```bash
 # 1. Setup environment
 cp .env.docker.example .env.docker
-# Edit .env.docker: Set POSTGRES_PASSWORD (use: openssl rand -base64 32)
+# Edit .env.docker: Set POSTGRES_PASSWORD (use: openssl rand -hex 32)
 
 # 2. Initialize Garage
 chmod +x scripts/init-garage.sh
@@ -72,7 +72,7 @@ chmod +x scripts/init-garage.sh
 docker compose --env-file .env.docker up -d
 
 # 4. Verify health
-docker compose ps
+docker compose --env-file .env.docker ps
 # All services should show "healthy" status
 
 # 5. Access application
@@ -140,7 +140,7 @@ Edit `.env.docker` and set a strong PostgreSQL password:
 
 ```bash
 # Generate a strong password
-openssl rand -base64 32
+openssl rand -hex 32
 
 # Edit .env.docker
 nano .env.docker  # or use your preferred editor
@@ -200,7 +200,7 @@ Secret key: <secret-key>
    GARAGE_SECRET_ACCESS_KEY=<Secret key from above>
 
 ✅ Garage initialization complete!
-Next step: Update .env.docker with credentials, then run 'docker compose up -d'
+Next step: Update .env.docker with credentials, then run 'docker compose --env-file .env.docker up -d'
 ```
 
 **Action Required**: Copy the `GARAGE_ACCESS_KEY_ID` and `GARAGE_SECRET_ACCESS_KEY` from the output to your `.env.docker` file.
@@ -210,7 +210,7 @@ Next step: Update .env.docker with credentials, then run 'docker compose up -d'
 Start all services:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env.docker up -d
 ```
 
 **Expected Output**:
@@ -228,7 +228,7 @@ docker compose up -d
 Check container status:
 
 ```bash
-docker compose ps
+docker compose --env-file .env.docker ps
 ```
 
 **Expected Output** (after ~40 seconds):
@@ -333,7 +333,7 @@ The app container:
 **Manual migration** (if needed):
 
 ```bash
-docker compose exec app ./run-migrations.sh
+docker compose --env-file .env.docker exec app ./run-migrations.sh
 ```
 
 **Check migration status**:
@@ -363,7 +363,7 @@ docker compose --env-file .env.docker up -d app
 Stop all services:
 
 ```bash
-docker compose down
+docker compose --env-file .env.docker down
 ```
 
 **Note**: Data persists in volumes (NOT deleted)
@@ -371,7 +371,7 @@ docker compose down
 Stop and remove volumes (⚠️ **deletes all data**):
 
 ```bash
-docker compose down -v
+docker compose --env-file .env.docker down -v
 ```
 
 ### Viewing Logs
@@ -379,21 +379,21 @@ docker compose down -v
 View logs for all services:
 
 ```bash
-docker compose logs -f
+docker compose --env-file .env.docker logs -f
 ```
 
 View logs for specific service:
 
 ```bash
-docker compose logs -f app
-docker compose logs -f postgres
-docker compose logs -f garage
+docker compose --env-file .env.docker logs -f app
+docker compose --env-file .env.docker logs -f postgres
+docker compose --env-file .env.docker logs -f garage
 ```
 
 View last 100 lines:
 
 ```bash
-docker compose logs --tail=100 app
+docker compose --env-file .env.docker logs --tail=100 app
 ```
 
 ### Restarting Services
@@ -401,13 +401,13 @@ docker compose logs --tail=100 app
 Restart all services:
 
 ```bash
-docker compose restart
+docker compose --env-file .env.docker restart
 ```
 
 Restart specific service:
 
 ```bash
-docker compose restart app
+docker compose --env-file .env.docker restart app
 ```
 
 ### Rebuilding Application
@@ -415,8 +415,8 @@ docker compose restart app
 If you make code changes, rebuild the app:
 
 ```bash
-docker compose build app
-docker compose up -d app
+docker compose --env-file .env.docker build app
+docker compose --env-file .env.docker up -d app
 ```
 
 ### Health Monitoring
@@ -482,13 +482,13 @@ docker exec little-roamers-postgres pg_dump -U postgres little_roamers > backup.
 1. Stop the application:
 
 ```bash
-docker compose down
+docker compose --env-file .env.docker down
 ```
 
 2. Start PostgreSQL only:
 
 ```bash
-docker compose up -d postgres
+docker compose --env-file .env.docker up -d postgres
 ```
 
 3. Wait for PostgreSQL to be ready:
@@ -506,7 +506,7 @@ docker exec -i little-roamers-postgres psql -U postgres little_roamers < backups
 5. Start all services:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env.docker up -d
 ```
 
 #### Restore Volumes
@@ -516,7 +516,7 @@ docker compose up -d
 1. Stop and remove volumes:
 
 ```bash
-docker compose down -v
+docker compose --env-file .env.docker down -v
 ```
 
 2. Recreate volumes and restore:
@@ -528,17 +528,17 @@ docker run --rm -v little-roamers-postgres-data:/data -v $(pwd)/backups:/backup 
 
 # Garage data
 docker volume create little-roamers-garage-data
-docker run --rm -v little-roamers-garage-data:/data -v $(pwd)/backups:/backup alpine tar xzf /backup//garage-data-<timestamp>.tar.gz -C /
+docker run --rm -v little-roamers-garage-data:/data -v $(pwd)/backups:/backup alpine tar xzf /backup/garage-data-<timestamp>.tar.gz -C /
 
 # Garage metadata
 docker volume create little-roamers-garage-meta
-docker run --rm -v little-roamers-garage-meta:/data -v $(pwd)/backups:/backup alpine tar xzf /backup//garage-meta-<timestamp>.tar.gz -C /
+docker run --rm -v little-roamers-garage-meta:/data -v $(pwd)/backups:/backup alpine tar xzf /backup/garage-meta-<timestamp>.tar.gz -C /
 ```
 
 3. Start services:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env.docker up -d
 ```
 
 ---
@@ -564,25 +564,25 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Proc
 
 ### PostgreSQL Unhealthy
 
-**Symptoms**: `docker compose ps` shows postgres as unhealthy
+**Symptoms**: `docker compose --env-file .env.docker ps` shows postgres as unhealthy
 
 **Diagnosis**:
 
 ```bash
-docker compose logs postgres
+docker compose --env-file .env.docker logs postgres
 ```
 
 **Common Causes**:
 
 1. **Wrong password in .env.docker**
    - Fix: Update `POSTGRES_PASSWORD` in `.env.docker`
-   - Restart: `docker compose restart postgres`
+   - Restart: `docker compose --env-file .env.docker restart postgres`
 
 2. **Corrupted data volume**
    - Fix: Remove volume and recreate
    ```bash
-   docker compose down -v
-   docker compose up -d
+   docker compose --env-file .env.docker down -v
+   docker compose --env-file .env.docker up -d
    ```
 
 ### Garage Connection Errors
@@ -592,7 +592,7 @@ docker compose logs postgres
 **Diagnosis**:
 
 ```bash
-docker compose logs garage
+docker compose --env-file .env.docker logs garage
 ```
 
 **Common Causes**:
@@ -600,7 +600,7 @@ docker compose logs garage
 1. **Missing credentials in .env.docker**
    - Fix: Re-run `./scripts/init-garage.sh`
    - Copy credentials to `.env.docker`
-   - Restart app: `docker compose restart app`
+   - Restart app: `docker compose --env-file .env.docker restart app`
 
 2. **Garage not initialized**
    - Fix: Run initialization script
@@ -615,14 +615,14 @@ docker compose logs garage
 **Diagnosis**:
 
 ```bash
-docker compose logs app | grep -i error
+docker compose --env-file .env.docker logs app | grep -i error
 ```
 
 **Solution**:
 
 1. Verify PostgreSQL is healthy:
    ```bash
-   docker compose ps postgres
+   docker compose --env-file .env.docker ps postgres
    ```
 
 2. Check DATABASE_URL format in app logs
@@ -631,7 +631,7 @@ docker compose logs app | grep -i error
 
 4. Restart app:
    ```bash
-   docker compose restart app
+   docker compose --env-file .env.docker restart app
    ```
 
 ### Build Fails (Sharp/HEIC Issues)
@@ -641,8 +641,8 @@ docker compose logs app | grep -i error
 **Solution 1** - Rebuild with no cache:
 
 ```bash
-docker compose build --no-cache app
-docker compose up -d app
+docker compose --env-file .env.docker build --no-cache app
+docker compose --env-file .env.docker up -d app
 ```
 
 **Solution 2** - Switch to Debian base (if Alpine issues persist):
@@ -657,7 +657,7 @@ Edit `Dockerfile`, change all `node:20-alpine` to `node:20-slim`
 
 ```bash
 # Check logs for specific service
-docker compose logs <service-name>
+docker compose --env-file .env.docker logs <service-name>
 
 # Check resource usage
 docker stats
@@ -671,7 +671,7 @@ docker stats
 
 ### Data Not Persisting
 
-**Symptoms**: Data disappears after `docker compose down`
+**Symptoms**: Data disappears after `docker compose --env-file .env.docker down`
 
 **Diagnosis**:
 
@@ -686,7 +686,7 @@ little-roamers-garage-meta
 little-roamers-postgres-data
 ```
 
-**Solution**: Ensure you're NOT using `docker compose down -v` (which deletes volumes)
+**Solution**: Ensure you're NOT using `docker compose --env-file .env.docker down -v` (which deletes volumes)
 
 ---
 
@@ -809,7 +809,7 @@ For issues, questions, or feature requests:
 
 - **GitHub Issues**: https://github.com/<your-org>/little-roamers/issues
 - **Documentation**: See CLAUDE.md for project details
-- **Logs**: Always include `docker compose logs` output when reporting issues
+- **Logs**: Always include `docker compose --env-file .env.docker logs` output when reporting issues
 
 ---
 
