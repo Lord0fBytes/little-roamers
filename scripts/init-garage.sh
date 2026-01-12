@@ -7,6 +7,18 @@ echo "Little Roamers v0.8.0"
 echo "======================================"
 echo ""
 
+# Check if .env.docker exists
+if [ ! -f ".env.docker" ]; then
+  echo "❌ Error: .env.docker file not found!"
+  echo "Please create .env.docker from .env.docker.example first:"
+  echo "  cp .env.docker.example .env.docker"
+  echo "  # Then edit .env.docker and set POSTGRES_PASSWORD"
+  exit 1
+fi
+
+echo "✅ Found .env.docker"
+echo ""
+
 # Step 1: Generate RPC secret and create garage.toml
 echo "Step 1: Generating garage.toml configuration..."
 if [ -f "garage.toml" ]; then
@@ -39,7 +51,7 @@ fi
 
 echo ""
 echo "Step 2: Starting Garage container..."
-docker compose up -d garage
+docker compose --env-file .env.docker up -d garage
 echo "⏳ Waiting 10 seconds for Garage to initialize..."
 sleep 10
 
