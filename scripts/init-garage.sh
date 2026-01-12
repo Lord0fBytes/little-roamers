@@ -70,10 +70,12 @@ echo "✅ Garage is ready!"
 
 echo ""
 echo "Step 3: Initializing Garage cluster..."
-NODE_ID=$(docker exec little-roamers-garage //garage node id -q)
-echo "📌 Node ID: $NODE_ID"
+NODE_ID_FULL=$(docker exec little-roamers-garage //garage node id -q)
+NODE_ID=$(echo "$NODE_ID_FULL" | cut -d'@' -f1)
+echo "📌 Node ID: $NODE_ID_FULL"
+echo "📌 Using Node ID (without address): $NODE_ID"
 
-docker exec little-roamers-garage //garage layout assign -z dc1 -c 1 $NODE_ID
+docker exec little-roamers-garage //garage layout assign -z dc1 -c 1G $NODE_ID
 docker exec little-roamers-garage //garage layout apply --version 1
 echo "✅ Garage cluster initialized"
 

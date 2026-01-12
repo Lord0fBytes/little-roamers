@@ -2,7 +2,7 @@
 
 echo "Little Roamers Health Status"
 echo "======================================"
-docker compose ps
+docker compose --env-file .env.docker ps
 echo ""
 echo "Detailed Health Checks:"
 echo "----------------------"

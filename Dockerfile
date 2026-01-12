@@ -12,6 +12,13 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Dummy env vars for build time (overridden at runtime)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV GARAGE_ENDPOINT="http://localhost:3900"
+ENV GARAGE_REGION="garage"
+ENV GARAGE_ACCESS_KEY_ID="dummy"
+ENV GARAGE_SECRET_ACCESS_KEY="dummy"
+ENV GARAGE_BUCKET="dummy"
 RUN npm run build
 
 # Stage 3: Runner
