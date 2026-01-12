@@ -1,5 +1,5 @@
 -- Little Roamers Database Schema
--- Version 0.3.0 - Enhanced Data Model (PostgreSQL)
+-- Version 0.8.0 - Docker Deployment with Image Storage
 -- Run this in your PostgreSQL database (psql or GUI tool)
 
 -- Create database (run this first if database doesn't exist)
@@ -28,6 +28,9 @@ CREATE TABLE IF NOT EXISTS activities (
   -- Weather Context
   weather_conditions TEXT,             -- e.g., "Sunny", "Cloudy", "Rainy"
   temperature_c INTEGER,               -- Temperature in Celsius
+
+  -- Image Storage
+  image_key TEXT,                      -- Garage S3 object key (e.g., "walks/uuid.jpg")
 
   -- Timestamps
   activity_date TIMESTAMPTZ NOT NULL,
