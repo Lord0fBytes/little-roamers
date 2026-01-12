@@ -39,3 +39,8 @@ next-env.d.ts
 # development/documentation
 CLAUDE.md
 screenshots/
+
+# Docker
+.env.docker
+garage.toml
+backups/
