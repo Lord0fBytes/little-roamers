@@ -37,10 +37,11 @@ services:
     networks:
       - little-roamers-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3900 || exit 1"]
+      test: ["CMD-SHELL", "//garage node id > /dev/null 2>&1 || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3
+      start_period: 10s
 
   app:
     build:
