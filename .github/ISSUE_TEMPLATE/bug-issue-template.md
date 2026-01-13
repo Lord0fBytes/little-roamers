@@ -8,13 +8,13 @@ assignees: ''
 ---
 
 ## What
-  [What needs to be done]
+[What needs to be done]
 
-  ## Why
-  [Why this is needed]
+## Why
+[Why this is needed]
 
 ## Version
 [0.X.0]
 
-  ## Proposed State
+## Proposed State
 [What does it look like if it's working]
